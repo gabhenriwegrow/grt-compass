@@ -7,8 +7,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { StatusBadge } from "@/components/StatusBadge";
+import { Markdown } from "@/components/Markdown";
+import { GenerateReportButton } from "@/components/GenerateReportButton";
 import { InitiativeStatus, STATUS_META, formatDate, mondayOf } from "@/lib/grt";
-import { ArrowLeft, Pencil, Plus } from "lucide-react";
+import { ArrowLeft, Pencil, Plus, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 type Initiative = any;
