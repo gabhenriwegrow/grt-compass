@@ -12,9 +12,11 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { Markdown } from "@/components/Markdown";
 import { GenerateReportButton } from "@/components/GenerateReportButton";
-import { InitiativeStatus, STATUS_META, formatDate, mondayOf } from "@/lib/grt";
+import { StatusSparkline } from "@/components/StatusSparkline";
+import { InitiativeStatus, STATUS_META, formatDate, mondayOf, computeTrend, TREND_META } from "@/lib/grt";
 import { ArrowLeft, AlertTriangle, Pencil, Plus, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 type Initiative = any;
 type Checkin = {
@@ -139,6 +141,21 @@ const InitiativeDetail = () => {
                 </Link>
               )}
               <span className="text-[10px] text-muted-foreground metric">#{data.number}</span>
+              {(() => {
+                const hist = [...checkins].reverse().map((c) => ({ week_date: c.week_date, status_snapshot: c.status_snapshot }));
+                const trend = computeTrend(hist);
+                const tMeta = TREND_META[trend];
+                const weeksShown = Math.min(8, hist.length || 1);
+                return (
+                  <div className="flex items-center gap-2 ml-1">
+                    <StatusSparkline checkins={hist} currentStatus={data.status} width={160} height={24} />
+                    <span className={cn("text-[10px] font-medium metric", tMeta.color)}>
+                      {tMeta.icon} {tMeta.label}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">últimas {weeksShown} semanas</span>
+                  </div>
+                );
+              })()}
             </div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{data.title}</h1>
             {data.description && <p className="text-sm text-muted-foreground max-w-2xl">{data.description}</p>}

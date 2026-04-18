@@ -133,6 +133,20 @@ const Dashboard = () => {
       .filter((x) => x.risk !== null);
   }, [initiatives, lastCheckinByInit]);
 
+  // Team trend counts (exclude concluido and nao_iniciado)
+  const trendCounts = useMemo(() => {
+    const c = { improving: 0, stable: 0, declining: 0 };
+    for (const i of initiatives) {
+      if (i.status === "concluido" || i.status === "nao_iniciado") continue;
+      const hist = checkinsByInit[i.id] ?? [];
+      const t = computeTrend(hist);
+      if (t === "improving") c.improving++;
+      else if (t === "stable") c.stable++;
+      else if (t === "declining") c.declining++;
+    }
+    return c;
+  }, [initiatives, checkinsByInit]);
+
   // MRR chart data
   const chartData = MONTH_NAMES_PT.map((label, idx) => {
     const m = monthlyMrr.find((x) => x.month === idx + 1);
@@ -164,10 +178,11 @@ const Dashboard = () => {
             {objective?.statement ?? "—"}
           </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <MetricBox icon={<TargetIcon className="w-4 h-4" />} label="Meta anual" value={formatBRLShort(annualTarget)} />
             <MetricBox icon={<TrendingUp className="w-4 h-4" />} label="MRR realizado acumulado" value={formatBRLShort(mrrAccumulated)} />
             <MetricBox icon={<Calendar className="w-4 h-4" />} label="Meta mensal" value={formatBRLShort(monthlyTarget)} />
+            <MetricBox icon={<Activity className="w-4 h-4" />} label="Tendência do time" value={`${trendCounts.improving} ↗ · ${trendCounts.stable} → · ${trendCounts.declining} ↘`} />
           </div>
 
           {/* Dual progress */}
@@ -291,6 +306,12 @@ const Dashboard = () => {
                     {init.impediment && <div className="text-xs text-destructive">⚠ {init.impediment}</div>}
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
+                    <StatusSparkline
+                      checkins={checkinsByInit[init.id] ?? []}
+                      currentStatus={init.status}
+                      width={80}
+                      height={16}
+                    />
                     <div className="text-right">
                       <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Sem update há</div>
                       <div className="metric text-sm font-semibold">{risk!.daysSinceUpdate != null ? `${risk!.daysSinceUpdate}d` : "—"}</div>
