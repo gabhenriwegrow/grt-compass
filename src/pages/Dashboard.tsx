@@ -15,7 +15,7 @@ import {
 } from "@/lib/grt";
 import { classifyInitiativeRisk, InitiativeWithCheckin } from "@/lib/risks";
 import { Link } from "react-router-dom";
-import { ArrowRight, TrendingUp, Target as TargetIcon, AlertTriangle, Pencil, Calendar, Activity } from "lucide-react";
+import { ArrowRight, TrendingUp, Target as TargetIcon, AlertTriangle, Pencil, Calendar, Activity, MessageSquare } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { toast } from "sonner";
 
