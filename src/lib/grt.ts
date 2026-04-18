@@ -135,6 +135,34 @@ export const computeKrHealth = (completed: number, total: number): Health => {
   return "off_track";
 };
 
+// Trend computation based on last 2 check-ins
+export type Trend = "improving" | "stable" | "declining" | "new";
+
+export const computeTrend = (
+  checkins: Array<{ status_snapshot: string }>
+): Trend => {
+  if (checkins.length < 2) return "new";
+  const statusScore: Record<string, number> = {
+    concluido: 4,
+    em_andamento: 3,
+    pausado: 2,
+    nao_iniciado: 1,
+    bloqueado: 0,
+  };
+  const recent = statusScore[checkins[checkins.length - 1].status_snapshot] ?? 1;
+  const previous = statusScore[checkins[checkins.length - 2].status_snapshot] ?? 1;
+  if (recent > previous) return "improving";
+  if (recent < previous) return "declining";
+  return "stable";
+};
+
+export const TREND_META: Record<Trend, { label: string; icon: string; color: string }> = {
+  improving: { label: "Melhorando", icon: "↗", color: "text-success" },
+  stable:    { label: "Estável",    icon: "→", color: "text-muted-foreground" },
+  declining: { label: "Piorando",   icon: "↘", color: "text-destructive" },
+  new:       { label: "Novo",       icon: "•", color: "text-muted-foreground" },
+};
+
 // Parse number from BR string (R$ 1.260.000,00) or US string
 export const parseBRNumber = (input: string): number => {
   if (!input) return 0;

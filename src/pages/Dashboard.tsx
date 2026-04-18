@@ -7,13 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { HealthBadge, StatusBadge } from "@/components/StatusBadge";
 import { CategoryBadge } from "@/components/CategoryBadge";
+import { StatusSparkline } from "@/components/StatusSparkline";
 import {
   CATEGORIES, formatBRL, formatBRLShort, Health, InitiativeStatus, MONTH_NAMES_PT,
   STATUS_META, computeObjectiveHealth, computeKrHealth, monthsElapsed, pctOfYearElapsed, parseBRNumber,
+  computeTrend,
 } from "@/lib/grt";
 import { classifyInitiativeRisk, InitiativeWithCheckin } from "@/lib/risks";
 import { Link } from "react-router-dom";
-import { ArrowRight, TrendingUp, Target as TargetIcon, AlertTriangle, Pencil, Calendar } from "lucide-react";
+import { ArrowRight, TrendingUp, Target as TargetIcon, AlertTriangle, Pencil, Calendar, Activity } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { toast } from "sonner";
 
@@ -38,6 +40,7 @@ const Dashboard = () => {
   const [initiatives, setInitiatives] = useState<Initiative[]>([]);
   const [monthlyMrr, setMonthlyMrr] = useState<MonthlyMrr[]>([]);
   const [lastCheckinByInit, setLastCheckinByInit] = useState<Record<string, { date: string; status: InitiativeStatus }>>({});
+  const [checkinsByInit, setCheckinsByInit] = useState<Record<string, Array<{ week_date: string; status_snapshot: string }>>>({});
   const [loading, setLoading] = useState(true);
   const [editingMonth, setEditingMonth] = useState<MonthlyMrr | null>(null);
   const [editingValue, setEditingValue] = useState("");
@@ -54,11 +57,24 @@ const Dashboard = () => {
     setKrs((krRes.data ?? []) as KR[]);
     setInitiatives((initRes.data ?? []) as Initiative[]);
     setMonthlyMrr((mrrRes.data ?? []) as MonthlyMrr[]);
-    const map: Record<string, { date: string; status: InitiativeStatus }> = {};
+    // Build last-checkin map AND per-initiative chronological history (oldest -> newest, deduped per week)
+    const lastMap: Record<string, { date: string; status: InitiativeStatus }> = {};
+    const histMap: Record<string, Map<string, { week_date: string; status_snapshot: string; created_at: string }>> = {};
     for (const c of (ckRes.data ?? []) as any[]) {
-      if (!map[c.initiative_id]) map[c.initiative_id] = { date: c.week_date, status: c.status_snapshot };
+      if (!lastMap[c.initiative_id]) lastMap[c.initiative_id] = { date: c.week_date, status: c.status_snapshot };
+      const m = (histMap[c.initiative_id] ??= new Map());
+      const existing = m.get(c.week_date);
+      if (!existing || existing.created_at < c.created_at) {
+        m.set(c.week_date, { week_date: c.week_date, status_snapshot: c.status_snapshot, created_at: c.created_at });
+      }
     }
-    setLastCheckinByInit(map);
+    const histOut: Record<string, Array<{ week_date: string; status_snapshot: string }>> = {};
+    for (const [initId, m] of Object.entries(histMap)) {
+      const arr = Array.from(m.values()).sort((a, b) => a.week_date.localeCompare(b.week_date));
+      histOut[initId] = arr.map(({ week_date, status_snapshot }) => ({ week_date, status_snapshot }));
+    }
+    setLastCheckinByInit(lastMap);
+    setCheckinsByInit(histOut);
     setLoading(false);
   };
 
@@ -117,6 +133,20 @@ const Dashboard = () => {
       .filter((x) => x.risk !== null);
   }, [initiatives, lastCheckinByInit]);
 
+  // Team trend counts (exclude concluido and nao_iniciado)
+  const trendCounts = useMemo(() => {
+    const c = { improving: 0, stable: 0, declining: 0 };
+    for (const i of initiatives) {
+      if (i.status === "concluido" || i.status === "nao_iniciado") continue;
+      const hist = checkinsByInit[i.id] ?? [];
+      const t = computeTrend(hist);
+      if (t === "improving") c.improving++;
+      else if (t === "stable") c.stable++;
+      else if (t === "declining") c.declining++;
+    }
+    return c;
+  }, [initiatives, checkinsByInit]);
+
   // MRR chart data
   const chartData = MONTH_NAMES_PT.map((label, idx) => {
     const m = monthlyMrr.find((x) => x.month === idx + 1);
@@ -148,10 +178,11 @@ const Dashboard = () => {
             {objective?.statement ?? "—"}
           </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <MetricBox icon={<TargetIcon className="w-4 h-4" />} label="Meta anual" value={formatBRLShort(annualTarget)} />
             <MetricBox icon={<TrendingUp className="w-4 h-4" />} label="MRR realizado acumulado" value={formatBRLShort(mrrAccumulated)} />
             <MetricBox icon={<Calendar className="w-4 h-4" />} label="Meta mensal" value={formatBRLShort(monthlyTarget)} />
+            <MetricBox icon={<Activity className="w-4 h-4" />} label="Tendência do time" value={`${trendCounts.improving} ↗ · ${trendCounts.stable} → · ${trendCounts.declining} ↘`} />
           </div>
 
           {/* Dual progress */}
@@ -275,6 +306,12 @@ const Dashboard = () => {
                     {init.impediment && <div className="text-xs text-destructive">⚠ {init.impediment}</div>}
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
+                    <StatusSparkline
+                      checkins={checkinsByInit[init.id] ?? []}
+                      currentStatus={init.status}
+                      width={80}
+                      height={16}
+                    />
                     <div className="text-right">
                       <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Sem update há</div>
                       <div className="metric text-sm font-semibold">{risk!.daysSinceUpdate != null ? `${risk!.daysSinceUpdate}d` : "—"}</div>
