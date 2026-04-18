@@ -13,6 +13,7 @@ import InitiativeDetail from "./pages/InitiativeDetail";
 import Checkins from "./pages/Checkins";
 import Reports from "./pages/Reports";
 import Import from "./pages/Import";
+import Config from "./pages/Config";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound.tsx";
 

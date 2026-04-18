@@ -102,9 +102,9 @@ const Config = () => {
     toast.success(`${initiatives.length} iniciativas exportadas`);
   };
 
-  if (loading) return <div className="container py-10 text-sm text-muted-foreground">Carregando…</div>;
-
   const totalMrr = useMemo(() => Object.values(mrrInputs).reduce((s, v) => s + parseBRNumber(v), 0), [mrrInputs]);
+
+  if (loading) return <div className="container py-10 text-sm text-muted-foreground">Carregando…</div>;
 
   return (
     <div className="container py-6 md:py-10 max-w-5xl space-y-6">
