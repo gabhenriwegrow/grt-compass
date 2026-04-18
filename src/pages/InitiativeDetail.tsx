@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { StatusBadge } from "@/components/StatusBadge";
+import { StatusBadge, StatusIcon } from "@/components/StatusBadge";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { Markdown } from "@/components/Markdown";
 import { GenerateReportButton } from "@/components/GenerateReportButton";
@@ -130,17 +130,17 @@ const InitiativeDetail = () => {
         <ArrowLeft className="w-4 h-4 mr-1.5" /> Voltar
       </Button>
 
-      <Card className="surface-elevated p-6 space-y-4">
+      <Card className="surface-elevated p-8 space-y-5">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <div className="space-y-3 min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <CategoryBadge category={data.category} />
               {krCode && (
-                <Link to="/initiatives" className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 transition-colors">
+                <Link to="/initiatives" className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#0C2340]/[0.06] text-[#0C2340] border border-[#0C2340]/15 hover:bg-[#0C2340]/10 transition-colors">
                   {krCode}
                 </Link>
               )}
-              <span className="text-[10px] text-muted-foreground metric">#{data.number}</span>
+              <span className="text-[10px] text-[#9EA7B3] metric">#{data.number}</span>
               {(() => {
                 const hist = [...checkins].reverse().map((c) => ({ week_date: c.week_date, status_snapshot: c.status_snapshot }));
                 const trend = computeTrend(hist);
@@ -152,18 +152,18 @@ const InitiativeDetail = () => {
                     <span className={cn("text-[10px] font-medium metric", tMeta.color)}>
                       {tMeta.icon} {tMeta.label}
                     </span>
-                    <span className="text-[10px] text-muted-foreground">últimas {weeksShown} semanas</span>
+                    <span className="text-[10px] text-[#9EA7B3]">últimas {weeksShown} semanas</span>
                   </div>
                 );
               })()}
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{data.title}</h1>
-            {data.description && <p className="text-sm text-muted-foreground max-w-2xl">{data.description}</p>}
+            <h1 className="text-[24px] md:text-[28px] font-semibold tracking-tight text-[#0C2340] leading-tight">{data.title}</h1>
+            {data.description && <p className="text-[14px] text-[#3D4F66] max-w-2xl">{data.description}</p>}
             {(data.effort != null || data.impact != null) && (
-              <div className="text-xs text-muted-foreground metric">
-                Esforço: <span className="text-foreground font-semibold">{data.effort ?? "—"}</span>
-                {" | "}Impacto: <span className="text-foreground font-semibold">{data.impact ?? "—"}</span>
-                {data.priority_score != null && <> {" | "}Peso: <span className="text-foreground font-semibold">{data.priority_score}</span></>}
+              <div className="text-[12px] text-[#878787] metric">
+                Esforço: <span className="text-[#0C2340] font-semibold">{data.effort ?? "—"}</span>
+                {" | "}Impacto: <span className="text-[#0C2340] font-semibold">{data.impact ?? "—"}</span>
+                {data.priority_score != null && <> {" | "}Peso: <span className="text-[#0C2340] font-semibold">{data.priority_score}</span></>}
               </div>
             )}
           </div>
@@ -172,7 +172,9 @@ const InitiativeDetail = () => {
               <SelectTrigger className="w-44 h-9"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {(Object.keys(STATUS_META) as InitiativeStatus[]).map((s) => (
-                  <SelectItem key={s} value={s}>{STATUS_META[s].emoji} {STATUS_META[s].label}</SelectItem>
+                  <SelectItem key={s} value={s}>
+                    <span className="inline-flex items-center gap-2"><StatusIcon status={s} className="w-3.5 h-3.5" /> {STATUS_META[s].label}</span>
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -189,7 +191,7 @@ const InitiativeDetail = () => {
             </Button>
           </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4 border-t border-border">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-5 border-t border-[#F3F4F6]">
           <Field label="Owner" value={data.owner ?? "—"} />
           <Field label="Prazo" value={formatDate(data.due_date)} />
           <Field label="Indicador" value={data.indicator ?? "—"} />
@@ -291,7 +293,9 @@ const InitiativeDetail = () => {
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {(Object.keys(STATUS_META) as InitiativeStatus[]).map((s) => (
-                        <SelectItem key={s} value={s}>{STATUS_META[s].emoji} {STATUS_META[s].label}</SelectItem>
+                        <SelectItem key={s} value={s}>
+                          <span className="inline-flex items-center gap-2"><StatusIcon status={s} className="w-3.5 h-3.5" /> {STATUS_META[s].label}</span>
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -310,23 +314,23 @@ const InitiativeDetail = () => {
             Nenhum check-in registrado.
           </Card>
         ) : (
-          <div className="relative pl-6 space-y-4 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-px before:bg-border">
+          <div className="relative pl-6 space-y-4 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-px before:bg-[#E5E7EB]">
             {checkins.map((c) => (
               <div key={c.id} className="relative">
-                <div className="absolute -left-[19px] top-3 w-3 h-3 rounded-full bg-primary border-2 border-background ring-2 ring-border" />
+                <div className="absolute -left-[18px] top-3 w-2.5 h-2.5 rounded-full bg-[#9B26B6] border-2 border-background ring-2 ring-[#E5E7EB]" />
                 <Card className="surface-card p-4 space-y-3">
                   <div className="flex items-center justify-between gap-3 flex-wrap">
                     <div className="flex items-center gap-2 text-xs">
-                      <span className="metric text-foreground font-semibold">{formatDate(c.week_date)}</span>
-                      <span className="text-muted-foreground">·</span>
-                      <span className="text-muted-foreground">{c.author}</span>
+                      <span className="metric text-[#0C2340] font-semibold">{formatDate(c.week_date)}</span>
+                      <span className="text-[#9EA7B3]">·</span>
+                      <span className="text-[#878787]">{c.author}</span>
                     </div>
                     <StatusBadge status={c.status_snapshot as InitiativeStatus} />
                   </div>
-                  {c.progress_delta && <div className="text-sm">{c.progress_delta}</div>}
-                  {c.blockers && <div className="text-sm text-destructive">⚠ {c.blockers}</div>}
+                  {c.progress_delta && <div className="text-sm text-[#3D4F66]">{c.progress_delta}</div>}
+                  {c.blockers && <div className="text-sm text-[#C0392B]/85">{c.blockers}</div>}
                   {c.next_steps && (
-                    <div className="text-xs text-muted-foreground border-l-2 border-border pl-3">
+                    <div className="text-xs text-[#878787] border-l-2 border-[#E5E7EB] pl-3">
                       <span className="uppercase tracking-wider font-semibold">Próximos: </span>{c.next_steps}
                     </div>
                   )}
@@ -342,8 +346,8 @@ const InitiativeDetail = () => {
 
 const Field = ({ label, value }: { label: string; value: string }) => (
   <div>
-    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
-    <div className="text-sm font-medium mt-0.5 truncate">{value}</div>
+    <div className="text-[11px] uppercase tracking-widest text-[#9EA7B3] font-medium">{label}</div>
+    <div className="text-[14px] text-[#0C2340] mt-1 truncate">{value}</div>
   </div>
 );
 

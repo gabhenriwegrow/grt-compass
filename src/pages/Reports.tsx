@@ -20,9 +20,9 @@ type Report = {
 };
 
 const TYPE_META: Record<string, { label: string; icon: any; color: string }> = {
-  weekly_summary:       { label: "Resumo semanal",      icon: ClipboardCheck, color: "text-primary" },
-  initiative_analysis:  { label: "Análise de iniciativa", icon: FileText,     color: "text-warning" },
-  executive_briefing:   { label: "Briefing executivo",   icon: Briefcase,     color: "text-success" },
+  weekly_summary:       { label: "Resumo semanal",      icon: ClipboardCheck, color: "text-[#0C2340]" },
+  initiative_analysis:  { label: "Análise de iniciativa", icon: FileText,     color: "text-[#B07D1A]" },
+  executive_briefing:   { label: "Briefing executivo",   icon: Briefcase,     color: "text-[#2D7D46]" },
 };
 
 const Reports = () => {
@@ -150,14 +150,14 @@ const Reports = () => {
               <button
                 key={r.id}
                 onClick={() => setActive(r)}
-                className="w-full text-left surface-card p-4 hover:border-primary/40 transition-colors"
+                className="w-full text-left surface-card p-5"
               >
                 <div className="flex items-start justify-between gap-3 flex-wrap">
-                  <div className="min-w-0 flex-1 space-y-1">
-                    <div className={`flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold ${meta.color}`}>
+                  <div className="min-w-0 flex-1 space-y-1.5">
+                    <div className={`flex items-center gap-1.5 text-[11px] uppercase tracking-widest font-medium ${meta.color}`}>
                       <Icon className="w-3 h-3" /> {meta.label}
                     </div>
-                    <div className="font-semibold truncate flex items-center gap-2">
+                    <div className="text-[14px] font-medium text-[#0C2340] truncate flex items-center gap-2">
                       {subtitle}
                       {sharedToken && (
                         <Tooltip>
@@ -173,7 +173,7 @@ const Reports = () => {
                                   () => toast.error("Não foi possível copiar"),
                                 );
                               }}
-                              className="inline-flex items-center text-primary/80 hover:text-primary"
+                              className="inline-flex items-center text-[#9B26B6] hover:opacity-80"
                             >
                               <Link2 className="w-3.5 h-3.5" />
                             </span>
@@ -182,9 +182,9 @@ const Reports = () => {
                         </Tooltip>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground line-clamp-2">{preview}…</p>
+                    <p className="text-[12px] text-[#878787] line-clamp-2">{preview}…</p>
                   </div>
-                  <span className="text-xs text-muted-foreground metric whitespace-nowrap">
+                  <span className="text-[12px] text-[#878787] metric whitespace-nowrap">
                     {formatDate(r.generated_at)}
                   </span>
                 </div>

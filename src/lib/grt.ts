@@ -1,19 +1,19 @@
 export type InitiativeStatus = "concluido" | "em_andamento" | "bloqueado" | "nao_iniciado" | "pausado";
 export type Health = "on_track" | "at_risk" | "off_track" | "achieved";
 
-export const STATUS_META: Record<InitiativeStatus, { label: string; emoji: string; color: string; dot: string }> = {
-  concluido:     { label: "Concluído",    emoji: "🟢", color: "text-[#2D7D46]", dot: "bg-[#2D7D46]" },
-  em_andamento:  { label: "Em andamento", emoji: "🔵", color: "text-[#9B26B6]", dot: "bg-[#9B26B6]" },
-  bloqueado:     { label: "Bloqueado",    emoji: "🔴", color: "text-[#C0392B]", dot: "bg-[#C0392B]" },
-  nao_iniciado:  { label: "Não iniciado", emoji: "⚪", color: "text-[#878787]", dot: "bg-[#878787]" },
-  pausado:       { label: "Pausado",      emoji: "🟡", color: "text-[#B07D1A]", dot: "bg-[#B07D1A]" },
+export const STATUS_META: Record<InitiativeStatus, { label: string; color: string; dot: string; iconName: string }> = {
+  concluido:     { label: "Concluído",    color: "text-[#2D7D46]", dot: "bg-[#2D7D46]", iconName: "CheckCircle2" },
+  em_andamento:  { label: "Em andamento", color: "text-[#0C2340]", dot: "bg-[#0C2340]", iconName: "Circle" },
+  bloqueado:     { label: "Bloqueado",    color: "text-[#C0392B]", dot: "bg-[#C0392B]", iconName: "XCircle" },
+  nao_iniciado:  { label: "Não iniciado", color: "text-[#878787]", dot: "bg-[#878787]", iconName: "MinusCircle" },
+  pausado:       { label: "Pausado",      color: "text-[#B07D1A]", dot: "bg-[#B07D1A]", iconName: "PauseCircle" },
 };
 
-export const HEALTH_META: Record<Health, { label: string; emoji: string; color: string; bg: string }> = {
-  on_track:  { label: "On track",   emoji: "🟢", color: "text-[#2D7D46]", bg: "bg-[#2D7D46]/10 border-[#2D7D46]/30" },
-  at_risk:   { label: "Em risco",   emoji: "🟡", color: "text-[#B07D1A]", bg: "bg-[#B07D1A]/10 border-[#B07D1A]/30" },
-  off_track: { label: "Off track",  emoji: "🔴", color: "text-[#C0392B]", bg: "bg-[#C0392B]/10 border-[#C0392B]/30" },
-  achieved:  { label: "Atingido",   emoji: "✅", color: "text-[#2D7D46]", bg: "bg-[#2D7D46]/10 border-[#2D7D46]/30" },
+export const HEALTH_META: Record<Health, { label: string; color: string; bg: string; iconName: string }> = {
+  on_track:  { label: "On track",   color: "text-[#2D7D46]", bg: "bg-[#2D7D46]/8 border-[#2D7D46]/20", iconName: "CheckCircle2" },
+  at_risk:   { label: "Em risco",   color: "text-[#B07D1A]", bg: "bg-[#B07D1A]/8 border-[#B07D1A]/20", iconName: "AlertTriangle" },
+  off_track: { label: "Off track",  color: "text-[#C0392B]", bg: "bg-[#C0392B]/8 border-[#C0392B]/20", iconName: "XCircle" },
+  achieved:  { label: "Atingido",   color: "text-[#2D7D46]", bg: "bg-[#2D7D46]/8 border-[#2D7D46]/20", iconName: "CheckCircle2" },
 };
 
 export const CATEGORIES = [
@@ -64,7 +64,7 @@ export const formatMetric = (
 // Returns Monday of the week for a given date in YYYY-MM-DD
 export const mondayOf = (d: Date = new Date()): string => {
   const date = new Date(d);
-  const day = date.getDay(); // 0 sun .. 6 sat
+  const day = date.getDay();
   const diff = (day === 0 ? -6 : 1) - day;
   date.setDate(date.getDate() + diff);
   date.setHours(0, 0, 0, 0);
@@ -77,7 +77,6 @@ export const sundayOf = (mondayIso: string): string => {
   return d.toISOString().slice(0, 10);
 };
 
-// DD/MM/YYYY format
 export const formatDate = (iso: string | null | undefined) => {
   if (!iso) return "—";
   const d = new Date(iso.length <= 10 ? iso + "T00:00:00" : iso);
@@ -96,7 +95,6 @@ export const daysBetween = (isoA: string, isoB: string = new Date().toISOString(
   return Math.floor((b - a) / (1000 * 60 * 60 * 24));
 };
 
-// % of year elapsed (for 2026)
 export const pctOfYearElapsed = (year = 2026): number => {
   const start = new Date(year, 0, 1).getTime();
   const end = new Date(year + 1, 0, 1).getTime();
@@ -106,15 +104,13 @@ export const pctOfYearElapsed = (year = 2026): number => {
   return Math.round(((now - start) / (end - start)) * 100);
 };
 
-// Number of months elapsed in current year (1-12)
 export const monthsElapsed = (year = 2026): number => {
   const now = new Date();
   if (now.getFullYear() < year) return 0;
   if (now.getFullYear() > year) return 12;
-  return now.getMonth() + 1; // 1..12
+  return now.getMonth() + 1;
 };
 
-// Compute objective health based on accumulated MRR vs proportional target
 export const computeObjectiveHealth = (mrrAcc: number, monthlyTarget: number, year = 2026): Health => {
   const months = monthsElapsed(year);
   if (months === 0) return "on_track";
@@ -126,7 +122,6 @@ export const computeObjectiveHealth = (mrrAcc: number, monthlyTarget: number, ye
   return "off_track";
 };
 
-// KR health based on % of completed initiatives
 export const computeKrHealth = (completed: number, total: number): Health => {
   if (total === 0) return "at_risk";
   const pct = (completed / total) * 100;
@@ -135,7 +130,6 @@ export const computeKrHealth = (completed: number, total: number): Health => {
   return "off_track";
 };
 
-// Trend computation based on last 2 check-ins
 export type Trend = "improving" | "stable" | "declining" | "new";
 
 export const computeTrend = (
@@ -163,7 +157,6 @@ export const TREND_META: Record<Trend, { label: string; icon: string; color: str
   new:       { label: "Novo",       icon: "•", color: "text-[#878787]" },
 };
 
-// Parse number from BR string (R$ 1.260.000,00) or US string
 export const parseBRNumber = (input: string): number => {
   if (!input) return 0;
   const cleaned = input.replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", ".");

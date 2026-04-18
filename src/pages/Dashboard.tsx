@@ -164,57 +164,56 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="container py-6 md:py-10 space-y-8 relative">
+    <div className="container py-8 md:py-12 space-y-10 relative">
       {/* Floating chat update FAB */}
       <Link
         to="/chat"
-        className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 bg-[#9B26B6] hover:bg-[#8A22A3] text-white rounded-full pl-4 pr-5 py-3 text-sm font-semibold shadow-elevated transition-colors"
+        className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 bg-[#9B26B6] hover:bg-[#8A22A3] text-white rounded-full pl-4 pr-5 py-3 text-sm font-medium shadow-elevated transition-colors"
         title="Atualizar por chat"
       >
         <MessageSquare className="w-4 h-4" />
         <span className="hidden sm:inline">Atualizar por chat</span>
       </Link>
       {/* Hero objective */}
-      <section className="surface-elevated p-6 md:p-10 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-hero opacity-50 pointer-events-none" />
-        <div className="relative space-y-6">
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="px-2 py-1 rounded-md bg-primary/15 text-primary border border-primary/30 font-mono uppercase tracking-wider">Objetivo {objective?.timeframe ?? "2026"}</span>
+      <section className="surface-elevated p-8 md:p-12 relative overflow-hidden">
+        <div className="relative space-y-7">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-[11px] font-medium text-[#878787] tracking-widest uppercase">Objetivo {objective?.timeframe ?? "2026"}</span>
             <HealthBadge health={computedHealth} />
-            {objective && <span className="text-muted-foreground">Confiança <span className="text-foreground metric font-semibold">{objective.confidence}%</span></span>}
+            {objective && <span className="text-[12px] text-[#878787]">Confiança <span className="text-[#0C2340] metric font-semibold">{objective.confidence}%</span></span>}
           </div>
-          <h1 className="text-2xl md:text-4xl font-bold tracking-tight max-w-3xl leading-tight">
+          <h1 className="text-[24px] md:text-[32px] font-semibold text-[#0C2340] leading-tight tracking-tight max-w-3xl">
             {objective?.statement ?? "—"}
           </h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <MetricBox icon={<TargetIcon className="w-4 h-4" />} label="Meta anual" value={formatBRLShort(annualTarget)} />
-            <MetricBox icon={<TrendingUp className="w-4 h-4" />} label="MRR realizado acumulado" value={formatBRLShort(mrrAccumulated)} />
-            <MetricBox icon={<Calendar className="w-4 h-4" />} label="Meta mensal" value={formatBRLShort(monthlyTarget)} />
-            <MetricBox icon={<Activity className="w-4 h-4" />} label="Tendência do time" value={`${trendCounts.improving} ↗ · ${trendCounts.stable} → · ${trendCounts.declining} ↘`} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <MetricBox label="Meta anual" value={formatBRLShort(annualTarget)} />
+            <MetricBox label="MRR realizado acumulado" value={formatBRLShort(mrrAccumulated)} />
+            <MetricBox label="Meta mensal" value={formatBRLShort(monthlyTarget)} />
+            <MetricBox label="Tendência do time" value={`${trendCounts.improving} ↗ · ${trendCounts.stable} → · ${trendCounts.declining} ↘`} />
           </div>
 
           {/* Dual progress */}
-          <div className="rounded-lg bg-background/40 border border-border p-4 space-y-3">
-            <div className="text-xs text-muted-foreground uppercase tracking-wider">Ano vs Meta</div>
-            <div className="space-y-1">
-              <div className="flex justify-between text-xs">
-                <span>Ano transcorrido</span>
-                <span className="metric font-semibold">{yearPct}%</span>
+          <div className="rounded-lg bg-white border border-[rgba(12,35,64,0.06)] p-5 space-y-3">
+            <div className="text-[11px] text-[#878787] uppercase tracking-widest font-medium">Ano vs Meta</div>
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-[12px]">
+                <span className="text-[#3D4F66]">Ano transcorrido</span>
+                <span className="metric font-semibold text-[#0C2340]">{yearPct}%</span>
               </div>
-              <Progress value={yearPct} className="h-2 [&>div]:bg-muted-foreground" />
+              <Progress value={yearPct} className="h-1.5 [&>div]:bg-[#9EA7B3]" />
             </div>
-            <div className="space-y-1">
-              <div className="flex justify-between text-xs">
-                <span>Meta atingida</span>
-                <span className={`metric font-semibold ${goalPct >= yearPct ? "text-success" : "text-warning"}`}>{goalPct}%</span>
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-[12px]">
+                <span className="text-[#3D4F66]">Meta atingida</span>
+                <span className={`metric font-semibold ${goalPct >= yearPct ? "text-[#2D7D46]" : "text-[#B07D1A]"}`}>{goalPct}%</span>
               </div>
-              <Progress value={goalPct} className="h-2" />
+              <Progress value={goalPct} className="h-1.5" />
             </div>
-            <div className="text-[11px] text-muted-foreground">
+            <div className="text-[12px] text-[#878787]">
               {goalPct >= yearPct
-                ? `✓ No ritmo: meta atingida (${goalPct}%) ≥ ano transcorrido (${yearPct}%)`
-                : `⚠ Atrás do ritmo: faltam ${yearPct - goalPct}pp para acompanhar o ano`}
+                ? `No ritmo: meta atingida (${goalPct}%) ≥ ano transcorrido (${yearPct}%)`
+                : `Atrás do ritmo: faltam ${yearPct - goalPct}pp para acompanhar o ano`}
             </div>
           </div>
         </div>
@@ -258,23 +257,24 @@ const Dashboard = () => {
           <h2 className="text-lg font-bold tracking-tight">MRR mensal 2026</h2>
           <p className="text-xs text-muted-foreground">Clique em uma barra para editar o valor realizado do mês.</p>
         </header>
-        <Card className="surface-card p-4">
+        <Card className="surface-card p-5">
           <div className="h-[280px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                <XAxis dataKey="mes" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} axisLine={{ stroke: "hsl(var(--border))" }} tickLine={false} />
-                <YAxis tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `R$ ${(v / 1000).toLocaleString("pt-BR")}k`} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#EBEBEB" vertical={false} />
+                <XAxis dataKey="mes" tick={{ fill: "#9EA7B3", fontSize: 12 }} axisLine={{ stroke: "#EBEBEB" }} tickLine={false} />
+                <YAxis tick={{ fill: "#9EA7B3", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `R$ ${(v / 1000).toLocaleString("pt-BR")}k`} />
                 <Tooltip
-                  contentStyle={{ background: "#fff", border: "1px solid #DADADA", borderRadius: 8, fontSize: 12 }}
+                  contentStyle={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: 12, fontSize: 13, padding: "12px 16px", boxShadow: "0 4px 16px rgba(12,35,64,0.06)" }}
                   formatter={(v: number) => formatBRL(v)}
-                  cursor={{ fill: "rgba(155, 38, 182, 0.08)" }}
+                  cursor={{ fill: "rgba(155, 38, 182, 0.06)" }}
                 />
-                <ReferenceLine y={monthlyTarget} stroke="#878787" strokeDasharray="4 4" label={{ value: "Meta", fill: "#878787", fontSize: 10, position: "right" }} />
+                <ReferenceLine y={monthlyTarget} stroke="#9B26B6" strokeDasharray="6 4" strokeOpacity={0.5} label={{ value: "Meta", fill: "#9EA7B3", fontSize: 10, position: "right" }} />
                 <Bar
                   dataKey="realized"
                   fill="#0C2340"
-                  radius={[6, 6, 0, 0]}
+                  fillOpacity={0.85}
+                  radius={[4, 4, 0, 0]}
                   onClick={(_, idx) => {
                     const m = monthlyMrr.find((x) => x.month === idx + 1);
                     if (m) {
@@ -292,27 +292,27 @@ const Dashboard = () => {
 
       {/* Attention */}
       <section className="space-y-3">
-        <h2 className="text-lg font-bold tracking-tight flex items-center gap-2">
-          <AlertTriangle className="w-5 h-5 text-warning" /> Precisam de atenção
-          <span className="text-xs font-normal text-muted-foreground">({attentionItems.length})</span>
+        <h2 className="text-[15px] font-semibold tracking-tight text-[#0C2340] flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 text-[#B07D1A] opacity-70" /> Precisam de atenção
+          <span className="text-[12px] font-normal text-[#878787]">({attentionItems.length})</span>
         </h2>
         {attentionItems.length === 0 ? (
-          <Card className="surface-card p-6 text-sm text-muted-foreground text-center">Nada pendente. ✨</Card>
+          <Card className="surface-card p-6 text-sm text-[#878787] text-center">Nada pendente.</Card>
         ) : (
           <div className="space-y-2">
             {attentionItems.map(({ init, risk }) => (
-              <Link key={init.id} to={`/initiatives/${init.id}`} className="block surface-card p-4 hover:border-warning/40 transition-colors group">
+              <Link key={init.id} to={`/initiatives/${init.id}`} className="block surface-card p-4 group">
                 <div className="flex items-start justify-between gap-3 flex-wrap">
                   <div className="min-w-0 flex-1 space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
                       <CategoryBadge category={init.category} />
-                      <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/30 font-semibold">
+                      <span className="text-[10px] font-medium text-[#B07D1A]">
                         {risk!.label}
                       </span>
-                      {init.owner && <span className="text-[11px] text-muted-foreground">· {init.owner}</span>}
+                      {init.owner && <span className="text-[11px] text-[#878787]">· {init.owner}</span>}
                     </div>
-                    <div className="font-semibold truncate">{init.title}</div>
-                    {init.impediment && <div className="text-xs text-destructive">⚠ {init.impediment}</div>}
+                    <div className="text-[14px] font-medium text-[#0C2340] truncate">{init.title}</div>
+                    {init.impediment && <div className="text-[12px] text-[#C0392B]/80">{init.impediment}</div>}
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
                     <StatusSparkline
@@ -321,11 +321,10 @@ const Dashboard = () => {
                       width={80}
                       height={16}
                     />
-                    <div className="text-right">
-                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Sem update há</div>
-                      <div className="metric text-sm font-semibold">{risk!.daysSinceUpdate != null ? `${risk!.daysSinceUpdate}d` : "—"}</div>
+                    <div className="text-[12px] text-[#878787] metric">
+                      {risk!.daysSinceUpdate != null ? `Sem update há ${risk!.daysSinceUpdate}d` : "—"}
                     </div>
-                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-warning transition-colors" />
+                    <ArrowRight className="w-4 h-4 text-[#9EA7B3] group-hover:text-[#0C2340] transition-colors" />
                   </div>
                 </div>
               </Link>
@@ -396,12 +395,12 @@ const Dashboard = () => {
   );
 };
 
-const MetricBox = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
-  <div className="rounded-lg bg-background/40 border border-border p-4">
-    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+const MetricBox = ({ icon, label, value }: { icon?: React.ReactNode; label: string; value: string }) => (
+  <div className="rounded-lg bg-[#F8F9FB] border border-[rgba(12,35,64,0.04)] p-5">
+    <div className="flex items-center gap-2 text-[11px] text-[#878787] uppercase tracking-widest font-medium">
       {icon} {label}
     </div>
-    <div className="metric text-2xl md:text-3xl font-bold mt-1">{value}</div>
+    <div className="metric text-[22px] md:text-[26px] font-bold text-[#0C2340] mt-2">{value}</div>
   </div>
 );
 
