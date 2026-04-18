@@ -134,6 +134,15 @@ const InitiativeDetail = () => {
         )}
       </Card>
 
+      {aiReport && (
+        <Card className="surface-elevated p-5 border-primary/30">
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-primary mb-3">
+            <Sparkles className="w-3 h-3" /> Análise IA · gerada {formatDate(aiReport.generated_at)}
+          </div>
+          <Markdown content={aiReport.content} />
+        </Card>
+      )}
+
       {/* Check-ins */}
       <section className="space-y-3">
         <div className="flex items-end justify-between">
