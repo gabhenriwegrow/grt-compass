@@ -14,7 +14,252 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_reports: {
+        Row: {
+          content: string
+          generated_at: string
+          id: string
+          report_type: string
+          scope: string
+          week_date: string | null
+        }
+        Insert: {
+          content: string
+          generated_at?: string
+          id?: string
+          report_type: string
+          scope: string
+          week_date?: string | null
+        }
+        Update: {
+          content?: string
+          generated_at?: string
+          id?: string
+          report_type?: string
+          scope?: string
+          week_date?: string | null
+        }
+        Relationships: []
+      }
+      initiatives: {
+        Row: {
+          category: string
+          created_at: string
+          current_value: number | null
+          description: string | null
+          due_date: string | null
+          effort: number | null
+          id: string
+          impact: number | null
+          impediment: string | null
+          indicator: string | null
+          indicator_type: string | null
+          key_result_id: string | null
+          notes: string | null
+          number: number
+          owner: string | null
+          priority_score: number | null
+          status: string
+          target_percentage: number | null
+          target_value: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          current_value?: number | null
+          description?: string | null
+          due_date?: string | null
+          effort?: number | null
+          id?: string
+          impact?: number | null
+          impediment?: string | null
+          indicator?: string | null
+          indicator_type?: string | null
+          key_result_id?: string | null
+          notes?: string | null
+          number?: number
+          owner?: string | null
+          priority_score?: number | null
+          status?: string
+          target_percentage?: number | null
+          target_value?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          current_value?: number | null
+          description?: string | null
+          due_date?: string | null
+          effort?: number | null
+          id?: string
+          impact?: number | null
+          impediment?: string | null
+          indicator?: string | null
+          indicator_type?: string | null
+          key_result_id?: string | null
+          notes?: string | null
+          number?: number
+          owner?: string | null
+          priority_score?: number | null
+          status?: string
+          target_percentage?: number | null
+          target_value?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "initiatives_key_result_id_fkey"
+            columns: ["key_result_id"]
+            isOneToOne: false
+            referencedRelation: "key_results"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      key_results: {
+        Row: {
+          baseline: number
+          code: string
+          created_at: string
+          current_value: number
+          health: string
+          id: string
+          metric_type: string
+          objective_id: string
+          owner: string | null
+          target: number
+          title: string
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          baseline?: number
+          code: string
+          created_at?: string
+          current_value?: number
+          health?: string
+          id?: string
+          metric_type: string
+          objective_id: string
+          owner?: string | null
+          target?: number
+          title: string
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          baseline?: number
+          code?: string
+          created_at?: string
+          current_value?: number
+          health?: string
+          id?: string
+          metric_type?: string
+          objective_id?: string
+          owner?: string | null
+          target?: number
+          title?: string
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "key_results_objective_id_fkey"
+            columns: ["objective_id"]
+            isOneToOne: false
+            referencedRelation: "objectives"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      objectives: {
+        Row: {
+          confidence: number
+          created_at: string
+          health: string
+          id: string
+          statement: string
+          target_annual: number
+          target_monthly: number
+          timeframe: string
+          updated_at: string
+        }
+        Insert: {
+          confidence?: number
+          created_at?: string
+          health?: string
+          id?: string
+          statement: string
+          target_annual?: number
+          target_monthly?: number
+          timeframe: string
+          updated_at?: string
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          health?: string
+          id?: string
+          statement?: string
+          target_annual?: number
+          target_monthly?: number
+          timeframe?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      weekly_checkins: {
+        Row: {
+          author: string
+          blockers: string | null
+          created_at: string
+          id: string
+          initiative_id: string
+          next_steps: string | null
+          notes: string | null
+          progress_delta: string | null
+          status_snapshot: string
+          week_date: string
+        }
+        Insert: {
+          author?: string
+          blockers?: string | null
+          created_at?: string
+          id?: string
+          initiative_id: string
+          next_steps?: string | null
+          notes?: string | null
+          progress_delta?: string | null
+          status_snapshot: string
+          week_date: string
+        }
+        Update: {
+          author?: string
+          blockers?: string | null
+          created_at?: string
+          id?: string
+          initiative_id?: string
+          next_steps?: string | null
+          notes?: string | null
+          progress_delta?: string | null
+          status_snapshot?: string
+          week_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_checkins_initiative_id_fkey"
+            columns: ["initiative_id"]
+            isOneToOne: false
+            referencedRelation: "initiatives"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
