@@ -104,6 +104,14 @@ const InitiativeDetail = () => {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge status={data.status} />
+            <GenerateReportButton
+              reportType="initiative_analysis"
+              initiativeId={id!}
+              label={aiReport ? "Reanalisar com IA" : "Analisar com IA"}
+              variant="outline"
+              size="sm"
+              onGenerated={load}
+            />
             <Button asChild variant="outline" size="sm">
               <Link to={`/initiatives/${id}/edit`}><Pencil className="w-3.5 h-3.5 mr-1.5" /> Editar</Link>
             </Button>
