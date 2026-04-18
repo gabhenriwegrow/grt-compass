@@ -257,7 +257,7 @@ const InitiativeForm = () => {
               </Button>
             )}
           </div>
-          <Button type="submit" disabled={saving} className="bg-gradient-primary">
+          <Button type="submit" disabled={saving} className="bg-[#0C2340] hover:bg-[#1A3A5C]">
             <Save className="w-4 h-4 mr-1.5" /> {saving ? "Salvando…" : "Salvar"}
           </Button>
         </div>

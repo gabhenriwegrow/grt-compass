@@ -6,7 +6,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-muted-foreground text-sm animate-pulse-glow">Carregando…</div>
+        <div className="text-muted-foreground text-sm animate-pulse">Carregando…</div>
       </div>
     );
   }

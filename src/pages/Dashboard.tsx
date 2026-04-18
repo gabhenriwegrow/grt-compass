@@ -229,21 +229,16 @@ const Dashboard = () => {
           {krStats.map(({ kr, total, done, pct, health }) => (
             <Card key={kr.id} className="surface-card p-5 space-y-4">
               <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="text-[10px] font-mono text-primary tracking-widest uppercase">{kr.code}</div>
-                  <div className="text-sm font-semibold mt-1 leading-snug">{kr.title}</div>
-                </div>
+                <div className="text-[11px] font-mono text-[#878787] tracking-wider uppercase">{kr.code}</div>
                 <HealthBadge health={health} />
               </div>
+              <div className="text-sm font-medium text-[#0C2340] leading-snug">{kr.title}</div>
               <div className="space-y-2">
-                <div className="flex items-baseline justify-between">
-                  <span className="metric text-2xl font-bold">{done} <span className="text-base text-muted-foreground">de {total}</span></span>
-                  <span className="text-xs text-muted-foreground">iniciativas</span>
-                </div>
-                <Progress value={pct} className="h-1.5" />
-                <div className="flex justify-between text-[11px] text-muted-foreground">
-                  <span>Owner: {kr.owner ?? "—"}</span>
-                  <span className="metric">{pct}% concluído</span>
+                <div className="text-sm text-[#0C2340]">{done} de {total} iniciativas</div>
+                <Progress value={pct} className="h-1" />
+                <div className="flex justify-between text-[11px] text-[#878787]">
+                  <span>{kr.owner ?? "—"}</span>
+                  <span>{pct}%</span>
                 </div>
               </div>
             </Card>
@@ -299,37 +294,36 @@ const Dashboard = () => {
         {attentionItems.length === 0 ? (
           <Card className="surface-card p-6 text-sm text-[#878787] text-center">Nada pendente.</Card>
         ) : (
-          <div className="space-y-2">
-            {attentionItems.map(({ init, risk }) => (
-              <Link key={init.id} to={`/initiatives/${init.id}`} className="block surface-card p-4 group">
-                <div className="flex items-start justify-between gap-3 flex-wrap">
-                  <div className="min-w-0 flex-1 space-y-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <CategoryBadge category={init.category} />
-                      <span className="text-[10px] font-medium text-[#B07D1A]">
-                        {risk!.label}
-                      </span>
-                      {init.owner && <span className="text-[11px] text-[#878787]">· {init.owner}</span>}
-                    </div>
-                    <div className="text-[14px] font-medium text-[#0C2340] truncate">{init.title}</div>
-                    {init.impediment && <div className="text-[12px] text-[#C0392B]/80">{init.impediment}</div>}
+          <Card className="surface-card overflow-hidden p-0">
+            {attentionItems.map(({ init, risk }, idx) => (
+              <Link
+                key={init.id}
+                to={`/initiatives/${init.id}`}
+                className={`flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-[#F8F9FB] transition-colors group ${idx > 0 ? "border-t border-[#F0F0F0]" : ""}`}
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-medium text-[#0C2340] truncate">{init.title}</div>
+                  <div className="text-xs text-[#878787] mt-0.5">
+                    {init.category}{init.owner && ` · ${init.owner}`}
                   </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <StatusSparkline
-                      checkins={checkinsByInit[init.id] ?? []}
-                      currentStatus={init.status}
-                      width={80}
-                      height={16}
-                    />
-                    <div className="text-[12px] text-[#878787] metric">
-                      {risk!.daysSinceUpdate != null ? `Sem update há ${risk!.daysSinceUpdate}d` : "—"}
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-[#9EA7B3] group-hover:text-[#0C2340] transition-colors" />
+                  {init.impediment && <div className="text-xs text-[#C0392B]/80 mt-1">{init.impediment}</div>}
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <StatusSparkline
+                    checkins={checkinsByInit[init.id] ?? []}
+                    currentStatus={init.status}
+                    width={60}
+                    height={14}
+                  />
+                  <div className="text-xs text-[#B07D1A] text-right">
+                    {risk!.label}
+                    {risk!.daysSinceUpdate != null && <span className="text-[#878787]"> · {risk!.daysSinceUpdate}d</span>}
                   </div>
+                  <ArrowRight className="w-4 h-4 text-[#9EA7B3] group-hover:text-[#0C2340] transition-colors" />
                 </div>
               </Link>
             ))}
-          </div>
+          </Card>
         )}
       </section>
 
@@ -354,12 +348,12 @@ const Dashboard = () => {
             const list = initiatives.filter((i) => i.category === cat);
             const done = list.filter((i) => i.status === "concluido").length;
             return (
-              <Card key={cat} className="surface-card p-4">
-                <CategoryBadge category={cat} />
-                <div className="flex items-baseline justify-between mt-2">
-                  <div className="metric text-2xl font-bold">{list.length}</div>
-                  <div className="text-xs text-success metric">{done} concluídas</div>
+              <Card key={cat} className="surface-card p-5">
+                <div className="text-sm font-semibold text-[#0C2340]">{cat}</div>
+                <div className="mt-2 text-xs text-[#878787]">
+                  <span className="text-base font-semibold text-[#0C2340]">{list.length}</span> iniciativa{list.length === 1 ? "" : "s"}
                 </div>
+                {done > 0 && <div className="text-xs text-[#2D7D46] mt-0.5">{done} concluída{done === 1 ? "" : "s"}</div>}
               </Card>
             );
           })}
@@ -386,7 +380,7 @@ const Dashboard = () => {
             <div className="text-xs text-muted-foreground">Meta de referência: {formatBRL(monthlyTarget)}</div>
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="ghost" onClick={() => setEditingMonth(null)}>Cancelar</Button>
-              <Button onClick={saveMonthValue} className="bg-gradient-primary">Salvar</Button>
+              <Button onClick={saveMonthValue} className="bg-[#0C2340] hover:bg-[#1A3A5C]">Salvar</Button>
             </div>
           </div>
         </DialogContent>
@@ -395,12 +389,10 @@ const Dashboard = () => {
   );
 };
 
-const MetricBox = ({ icon, label, value }: { icon?: React.ReactNode; label: string; value: string }) => (
-  <div className="rounded-lg bg-[#F8F9FB] border border-[rgba(12,35,64,0.04)] p-5">
-    <div className="flex items-center gap-2 text-[11px] text-[#878787] uppercase tracking-widest font-medium">
-      {icon} {label}
-    </div>
-    <div className="metric text-[22px] md:text-[26px] font-bold text-[#0C2340] mt-2">{value}</div>
+const MetricBox = ({ label, value }: { label: string; value: string }) => (
+  <div className="rounded-lg bg-[#F8F9FB] p-5">
+    <div className="text-xs text-[#878787]">{label}</div>
+    <div className="text-lg font-semibold text-[#0C2340] mt-1.5">{value}</div>
   </div>
 );
 

@@ -95,8 +95,8 @@ const SharedReport = () => {
       <header className="border-b border-border bg-card/50 backdrop-blur sticky top-0 z-10 no-print">
         <div className="max-w-4xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center shrink-0">
-              <Target className="w-4 h-4 text-primary-foreground" />
+            <div className="w-8 h-8 rounded-lg bg-[#0C2340] flex items-center justify-center shrink-0">
+              <Target className="w-4 h-4 text-white" />
             </div>
             <div className="min-w-0">
               <div className="font-bold text-sm tracking-tight truncate">GRT Command Center</div>

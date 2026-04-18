@@ -300,7 +300,7 @@ const Import = () => {
             <Button
               onClick={handleImport}
               disabled={importing || validCount === 0}
-              className="bg-gradient-primary"
+              className="bg-[#0C2340] hover:bg-[#1A3A5C]"
             >
               <Upload className="w-4 h-4 mr-1.5" />
               {importing ? "Importando…" : `Confirmar importação (${validCount})`}
