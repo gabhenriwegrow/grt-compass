@@ -21,7 +21,7 @@ const STATUS_Y: Record<string, number> = {
 
 const STATUS_COLOR: Record<string, string> = {
   concluido: "#2D7D46",
-  em_andamento: "#9B26B6",
+  em_andamento: "#0C2340",
   pausado: "#B07D1A",
   nao_iniciado: "#878787",
   bloqueado: "#C0392B",
@@ -37,13 +37,11 @@ const StatusSparklineImpl = ({
   height = 20,
   width = 120,
 }: Props) => {
-  // Dedupe by week_date keeping last; take last N
   const map = new Map<string, Checkin>();
   for (const c of checkins) map.set(c.week_date, c);
   let pts = Array.from(map.values()).sort((a, b) => a.week_date.localeCompare(b.week_date));
   pts = pts.slice(-weeks);
 
-  // Append current status as last point if it differs from last check-in's status
   if (currentStatus) {
     const last = pts[pts.length - 1];
     if (!last || last.status_snapshot !== currentStatus) {
@@ -84,8 +82,9 @@ const StatusSparklineImpl = ({
         <path
           d={pathD}
           fill="none"
-          stroke="hsl(var(--border))"
-          strokeWidth={1}
+          stroke="#DADADA"
+          strokeOpacity={0.5}
+          strokeWidth={0.75}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
@@ -96,14 +95,9 @@ const StatusSparklineImpl = ({
         const cy = yPx(p.status_snapshot);
         const fill = colorFor(p.status_snapshot);
         return (
-          <g key={`${p.week_date}-${i}`}>
-            {isLast && (
-              <circle cx={cx} cy={cy} r={6} fill={fill} opacity={0.25} className="animate-pulse" />
-            )}
-            <circle cx={cx} cy={cy} r={isLast ? 4 : 3} fill={fill}>
-              <title>{`${formatDate(p.week_date)} — ${p.status_snapshot}`}</title>
-            </circle>
-          </g>
+          <circle key={`${p.week_date}-${i}`} cx={cx} cy={cy} r={isLast ? 2.5 : 2} fill={fill} opacity={0.7}>
+            <title>{`${formatDate(p.week_date)} — ${p.status_snapshot}`}</title>
+          </circle>
         );
       })}
     </svg>
