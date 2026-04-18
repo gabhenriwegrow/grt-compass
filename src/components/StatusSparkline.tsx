@@ -20,15 +20,15 @@ const STATUS_Y: Record<string, number> = {
 };
 
 const STATUS_COLOR: Record<string, string> = {
-  concluido: "hsl(var(--success))",
-  em_andamento: "hsl(var(--primary))",
-  pausado: "hsl(var(--warning))",
-  nao_iniciado: "hsl(var(--muted-foreground))",
-  bloqueado: "hsl(var(--destructive))",
+  concluido: "#2D7D46",
+  em_andamento: "#9B26B6",
+  pausado: "#B07D1A",
+  nao_iniciado: "#878787",
+  bloqueado: "#C0392B",
 };
 
 const yFor = (s: string) => STATUS_Y[s] ?? 3;
-const colorFor = (s: string) => STATUS_COLOR[s] ?? "hsl(var(--muted-foreground))";
+const colorFor = (s: string) => STATUS_COLOR[s] ?? "#878787";
 
 const StatusSparklineImpl = ({
   checkins,

@@ -1,13 +1,13 @@
 import { cn } from "@/lib/utils";
 
 const CATEGORY_STYLES: Record<string, string> = {
-  "Impacto Rápido":          "bg-success/10 text-success border-success/30",
-  "Impacto Médio Prazo":     "bg-primary/10 text-primary border-primary/30",
-  "Impacto Estrutural":      "bg-warning/10 text-warning border-warning/30",
-  "Automação - Ferramenta":  "bg-accent/40 text-foreground border-border",
-  "Automação - HubSpot":     "bg-accent/40 text-foreground border-border",
-  "Automação - Vibe Coding": "bg-accent/40 text-foreground border-border",
-  "OKR Q2":                  "bg-destructive/10 text-destructive border-destructive/30",
+  "Impacto Rápido":          "bg-[#9B26B6]/10 text-[#9B26B6] border-[#9B26B6]/30",
+  "Impacto Médio Prazo":     "bg-[#0C2340]/10 text-[#0C2340] border-[#0C2340]/30",
+  "Impacto Estrutural":      "bg-[#B07D1A]/10 text-[#B07D1A] border-[#B07D1A]/30",
+  "Automação - Ferramenta":  "bg-[#3D4F66]/10 text-[#3D4F66] border-[#3D4F66]/30",
+  "Automação - HubSpot":     "bg-[#3D4F66]/10 text-[#3D4F66] border-[#3D4F66]/30",
+  "Automação - Vibe Coding": "bg-[#3D4F66]/10 text-[#3D4F66] border-[#3D4F66]/30",
+  "OKR Q2":                  "bg-[#C0392B]/10 text-[#C0392B] border-[#C0392B]/30",
 };
 
 export const CategoryBadge = ({ category, className }: { category: string; className?: string }) => (
