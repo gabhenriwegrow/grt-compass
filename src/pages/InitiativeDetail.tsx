@@ -7,8 +7,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { StatusBadge } from "@/components/StatusBadge";
+import { Markdown } from "@/components/Markdown";
+import { GenerateReportButton } from "@/components/GenerateReportButton";
 import { InitiativeStatus, STATUS_META, formatDate, mondayOf } from "@/lib/grt";
-import { ArrowLeft, Pencil, Plus } from "lucide-react";
+import { ArrowLeft, Pencil, Plus, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 type Initiative = any;
@@ -23,6 +25,7 @@ const InitiativeDetail = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<Initiative | null>(null);
   const [checkins, setCheckins] = useState<Checkin[]>([]);
+  const [aiReport, setAiReport] = useState<{ id: string; content: string; generated_at: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
 
@@ -35,12 +38,21 @@ const InitiativeDetail = () => {
   const [saving, setSaving] = useState(false);
 
   const load = async () => {
-    const [iRes, cRes] = await Promise.all([
+    const [iRes, cRes, rRes] = await Promise.all([
       supabase.from("initiatives").select("*").eq("id", id!).maybeSingle(),
       supabase.from("weekly_checkins").select("*").eq("initiative_id", id!).order("week_date", { ascending: false }),
+      supabase
+        .from("ai_reports")
+        .select("id,content,generated_at")
+        .eq("report_type", "initiative_analysis")
+        .eq("scope", id!)
+        .order("generated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
     ]);
     setData(iRes.data);
     setCheckins((cRes.data ?? []) as Checkin[]);
+    setAiReport(rRes.data as any);
     if (iRes.data) setStatusSnap(iRes.data.status as InitiativeStatus);
     setLoading(false);
   };
@@ -92,6 +104,14 @@ const InitiativeDetail = () => {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge status={data.status} />
+            <GenerateReportButton
+              reportType="initiative_analysis"
+              initiativeId={id!}
+              label={aiReport ? "Reanalisar com IA" : "Analisar com IA"}
+              variant="outline"
+              size="sm"
+              onGenerated={load}
+            />
             <Button asChild variant="outline" size="sm">
               <Link to={`/initiatives/${id}/edit`}><Pencil className="w-3.5 h-3.5 mr-1.5" /> Editar</Link>
             </Button>
@@ -113,6 +133,15 @@ const InitiativeDetail = () => {
           </div>
         )}
       </Card>
+
+      {aiReport && (
+        <Card className="surface-elevated p-5 border-primary/30">
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-primary mb-3">
+            <Sparkles className="w-3 h-3" /> Análise IA · gerada {formatDate(aiReport.generated_at)}
+          </div>
+          <Markdown content={aiReport.content} />
+        </Card>
+      )}
 
       {/* Check-ins */}
       <section className="space-y-3">
