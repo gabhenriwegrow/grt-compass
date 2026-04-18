@@ -13,6 +13,7 @@ import InitiativeDetail from "./pages/InitiativeDetail";
 import Checkins from "./pages/Checkins";
 import Reports from "./pages/Reports";
 import Import from "./pages/Import";
+import Config from "./pages/Config";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="/checkins" element={<Checkins />} />
               <Route path="/relatorios" element={<Reports />} />
               <Route path="/import" element={<Import />} />
+              <Route path="/config" element={<Config />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

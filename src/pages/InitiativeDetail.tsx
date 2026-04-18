@@ -4,13 +4,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { StatusBadge } from "@/components/StatusBadge";
+import { CategoryBadge } from "@/components/CategoryBadge";
 import { Markdown } from "@/components/Markdown";
 import { GenerateReportButton } from "@/components/GenerateReportButton";
 import { InitiativeStatus, STATUS_META, formatDate, mondayOf } from "@/lib/grt";
-import { ArrowLeft, Pencil, Plus, Sparkles } from "lucide-react";
+import { ArrowLeft, AlertTriangle, Pencil, Plus, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 type Initiative = any;
@@ -24,40 +27,67 @@ const InitiativeDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [data, setData] = useState<Initiative | null>(null);
+  const [krCode, setKrCode] = useState<string | null>(null);
   const [checkins, setCheckins] = useState<Checkin[]>([]);
   const [aiReport, setAiReport] = useState<{ id: string; content: string; generated_at: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
+
+  // inline-editable fields
+  const [impedimentEdit, setImpedimentEdit] = useState("");
+  const [currentValueEdit, setCurrentValueEdit] = useState("");
 
   // checkin form
   const [statusSnap, setStatusSnap] = useState<InitiativeStatus>("em_andamento");
   const [progress, setProgress] = useState("");
   const [blockers, setBlockers] = useState("");
   const [nextSteps, setNextSteps] = useState("");
-  const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
 
   const load = async () => {
     const [iRes, cRes, rRes] = await Promise.all([
       supabase.from("initiatives").select("*").eq("id", id!).maybeSingle(),
-      supabase.from("weekly_checkins").select("*").eq("initiative_id", id!).order("week_date", { ascending: false }),
-      supabase
-        .from("ai_reports")
-        .select("id,content,generated_at")
-        .eq("report_type", "initiative_analysis")
-        .eq("scope", id!)
-        .order("generated_at", { ascending: false })
-        .limit(1)
-        .maybeSingle(),
+      supabase.from("weekly_checkins").select("*").eq("initiative_id", id!).order("week_date", { ascending: false }).order("created_at", { ascending: false }),
+      supabase.from("ai_reports").select("id,content,generated_at").eq("report_type", "initiative_analysis").eq("scope", id!).order("generated_at", { ascending: false }).limit(1).maybeSingle(),
     ]);
     setData(iRes.data);
     setCheckins((cRes.data ?? []) as Checkin[]);
     setAiReport(rRes.data as any);
-    if (iRes.data) setStatusSnap(iRes.data.status as InitiativeStatus);
+    if (iRes.data) {
+      setStatusSnap(iRes.data.status as InitiativeStatus);
+      setImpedimentEdit(iRes.data.impediment ?? "");
+      setCurrentValueEdit(iRes.data.current_value != null ? String(iRes.data.current_value) : "");
+      if (iRes.data.key_result_id) {
+        const { data: kr } = await supabase.from("key_results").select("code").eq("id", iRes.data.key_result_id).maybeSingle();
+        setKrCode(kr?.code ?? null);
+      } else setKrCode(null);
+    }
     setLoading(false);
   };
 
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [id]);
+
+  const updateStatus = async (newStatus: InitiativeStatus) => {
+    const { error } = await supabase.from("initiatives").update({ status: newStatus }).eq("id", id!);
+    if (error) return toast.error(error.message);
+    toast.success("Status atualizado");
+    load();
+  };
+
+  const saveImpediment = async () => {
+    const { error } = await supabase.from("initiatives").update({ impediment: impedimentEdit || null }).eq("id", id!);
+    if (error) return toast.error(error.message);
+    toast.success("Impedimento atualizado");
+    load();
+  };
+
+  const saveCurrentValue = async () => {
+    const v = parseFloat(currentValueEdit.replace(",", "."));
+    const { error } = await supabase.from("initiatives").update({ current_value: isNaN(v) ? null : v }).eq("id", id!);
+    if (error) return toast.error(error.message);
+    toast.success("Valor atual atualizado");
+    load();
+  };
 
   const submitCheckin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,24 +100,27 @@ const InitiativeDetail = () => {
       progress_delta: progress || null,
       blockers: blockers || null,
       next_steps: nextSteps || null,
-      notes: notes || null,
       author: "Gabriel",
     });
     if (error) {
       setSaving(false);
       return toast.error(error.message);
     }
-    // Update initiative status to match snapshot
     await supabase.from("initiatives").update({ status: statusSnap, impediment: blockers || null }).eq("id", id!);
     setSaving(false);
     setOpen(false);
-    setProgress(""); setBlockers(""); setNextSteps(""); setNotes("");
+    setProgress(""); setBlockers(""); setNextSteps("");
     toast.success("Check-in registrado");
     load();
   };
 
   if (loading) return <div className="container py-10 text-sm text-muted-foreground">Carregando…</div>;
   if (!data) return <div className="container py-10">Não encontrado</div>;
+
+  const isOkrQ2 = data.category === "OKR Q2";
+  const targetVal = data.target_value != null ? Number(data.target_value) : null;
+  const currentVal = data.current_value != null ? Number(data.current_value) : 0;
+  const indicatorPct = targetVal && targetVal > 0 ? Math.min(100, Math.round((currentVal / targetVal) * 100)) : 0;
 
   return (
     <div className="container py-6 md:py-10 max-w-5xl space-y-6">
@@ -97,13 +130,35 @@ const InitiativeDetail = () => {
 
       <Card className="surface-elevated p-6 space-y-4">
         <div className="flex items-start justify-between gap-3 flex-wrap">
-          <div className="space-y-2 min-w-0">
-            <div className="text-[10px] uppercase tracking-widest text-primary font-mono">{data.category}</div>
+          <div className="space-y-3 min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <CategoryBadge category={data.category} />
+              {krCode && (
+                <Link to="/initiatives" className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md bg-primary/15 text-primary border border-primary/30 hover:bg-primary/25 transition-colors">
+                  {krCode}
+                </Link>
+              )}
+              <span className="text-[10px] text-muted-foreground metric">#{data.number}</span>
+            </div>
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{data.title}</h1>
             {data.description && <p className="text-sm text-muted-foreground max-w-2xl">{data.description}</p>}
+            {(data.effort != null || data.impact != null) && (
+              <div className="text-xs text-muted-foreground metric">
+                Esforço: <span className="text-foreground font-semibold">{data.effort ?? "—"}</span>
+                {" | "}Impacto: <span className="text-foreground font-semibold">{data.impact ?? "—"}</span>
+                {data.priority_score != null && <> {" | "}Peso: <span className="text-foreground font-semibold">{data.priority_score}</span></>}
+              </div>
+            )}
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <StatusBadge status={data.status} />
+            <Select value={data.status} onValueChange={(v) => updateStatus(v as InitiativeStatus)}>
+              <SelectTrigger className="w-44 h-9"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {(Object.keys(STATUS_META) as InitiativeStatus[]).map((s) => (
+                  <SelectItem key={s} value={s}>{STATUS_META[s].emoji} {STATUS_META[s].label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <GenerateReportButton
               reportType="initiative_analysis"
               initiativeId={id!}
@@ -120,18 +175,59 @@ const InitiativeDetail = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4 border-t border-border">
           <Field label="Owner" value={data.owner ?? "—"} />
           <Field label="Prazo" value={formatDate(data.due_date)} />
-          <Field label="Esforço × Impacto" value={data.effort && data.impact ? `${data.effort} × ${data.impact}` : "—"} />
-          <Field label="Prioridade" value={data.priority_score?.toString() ?? "—"} />
           <Field label="Indicador" value={data.indicator ?? "—"} />
           <Field label="Tipo" value={data.indicator_type ?? "—"} />
-          <Field label="Atual / Alvo" value={data.target_value != null ? `${data.current_value ?? 0} / ${data.target_value}` : "—"} />
-          <Field label="% Alvo" value={data.target_percentage != null ? `${data.target_percentage}%` : "—"} />
         </div>
-        {data.impediment && (
-          <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-            ⚠ <strong>Impedimento:</strong> {data.impediment}
+      </Card>
+
+      {/* Indicator block (OKR Q2) */}
+      {isOkrQ2 && (
+        <Card className="surface-card p-5 space-y-4">
+          <div className="flex items-baseline justify-between">
+            <h3 className="text-sm font-bold tracking-wider uppercase text-primary">Indicador de sucesso</h3>
+            <span className="text-xs text-muted-foreground">{data.indicator_type ?? "—"}</span>
           </div>
-        )}
+          {data.indicator && <div className="text-sm">{data.indicator}</div>}
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label className="text-xs">Valor atual</Label>
+              <div className="flex gap-2">
+                <Input value={currentValueEdit} onChange={(e) => setCurrentValueEdit(e.target.value)} placeholder="0" />
+                <Button size="sm" onClick={saveCurrentValue}>Salvar</Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-xs">Meta</Label>
+              <div className="metric text-2xl font-bold">{targetVal ?? "—"}</div>
+            </div>
+          </div>
+          {targetVal != null && (
+            <div className="space-y-1">
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">Progresso</span>
+                <span className="metric font-semibold">{indicatorPct}%</span>
+              </div>
+              <Progress value={indicatorPct} className="h-2" />
+            </div>
+          )}
+        </Card>
+      )}
+
+      {/* Impediment editable */}
+      <Card className={`p-5 space-y-3 ${data.impediment ? "border-destructive/40 bg-destructive/5" : "surface-card"}`}>
+        <div className="flex items-center gap-2">
+          <AlertTriangle className={`w-4 h-4 ${data.impediment ? "text-destructive" : "text-muted-foreground"}`} />
+          <h3 className="text-sm font-bold uppercase tracking-wider">Impedimento</h3>
+        </div>
+        <Textarea
+          rows={2}
+          value={impedimentEdit}
+          onChange={(e) => setImpedimentEdit(e.target.value)}
+          placeholder="Sem impedimentos. Descreva aqui qualquer bloqueio."
+        />
+        <div className="flex justify-end">
+          <Button size="sm" onClick={saveImpediment}>Salvar impedimento</Button>
+        </div>
       </Card>
 
       {aiReport && (
@@ -143,12 +239,12 @@ const InitiativeDetail = () => {
         </Card>
       )}
 
-      {/* Check-ins */}
+      {/* Check-ins timeline */}
       <section className="space-y-3">
         <div className="flex items-end justify-between">
           <div>
-            <h2 className="text-lg font-bold tracking-tight">Histórico de check-ins</h2>
-            <p className="text-xs text-muted-foreground">{checkins.length} registros</p>
+            <h2 className="text-lg font-bold tracking-tight">Timeline de check-ins</h2>
+            <p className="text-xs text-muted-foreground">{checkins.length} registros · mais recente primeiro</p>
           </div>
           <Button onClick={() => setOpen((o) => !o)} className="bg-gradient-primary">
             <Plus className="w-4 h-4 mr-1.5" /> Novo check-in
@@ -158,39 +254,35 @@ const InitiativeDetail = () => {
         {open && (
           <Card className="surface-elevated p-5 animate-fade-in">
             <form onSubmit={submitCheckin} className="space-y-4">
-              <div className="text-xs text-muted-foreground">Semana: <span className="metric text-foreground">{mondayOf(new Date())}</span></div>
-              <div className="space-y-2">
-                <Label>Status atual *</Label>
-                <Select value={statusSnap} onValueChange={(v) => setStatusSnap(v as InitiativeStatus)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {(Object.keys(STATUS_META) as InitiativeStatus[]).map((s) => (
-                      <SelectItem key={s} value={s}>{STATUS_META[s].emoji} {STATUS_META[s].label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <div className="text-xs text-muted-foreground">Semana: <span className="metric text-foreground">{formatDate(mondayOf(new Date()))}</span></div>
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>O que avançou</Label>
+                  <Label>O que avançou?</Label>
                   <Textarea rows={3} value={progress} onChange={(e) => setProgress(e.target.value)} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Bloqueios</Label>
+                  <Label>Bloqueios?</Label>
                   <Textarea rows={3} value={blockers} onChange={(e) => setBlockers(e.target.value)} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Próximos passos</Label>
+                  <Label>Próximos passos?</Label>
                   <Textarea rows={3} value={nextSteps} onChange={(e) => setNextSteps(e.target.value)} />
                 </div>
                 <div className="space-y-2">
-                  <Label>Notas</Label>
-                  <Textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} />
+                  <Label>Status *</Label>
+                  <Select value={statusSnap} onValueChange={(v) => setStatusSnap(v as InitiativeStatus)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(STATUS_META) as InitiativeStatus[]).map((s) => (
+                        <SelectItem key={s} value={s}>{STATUS_META[s].emoji} {STATUS_META[s].label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Cancelar</Button>
-                <Button type="submit" disabled={saving} className="bg-gradient-primary">{saving ? "Salvando…" : "Registrar check-in"}</Button>
+                <Button type="submit" disabled={saving} className="bg-gradient-primary">{saving ? "Salvando…" : "Salvar check-in"}</Button>
               </div>
             </form>
           </Card>
@@ -201,24 +293,28 @@ const InitiativeDetail = () => {
             Nenhum check-in registrado.
           </Card>
         ) : (
-          <div className="space-y-2">
+          <div className="relative pl-6 space-y-4 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-px before:bg-border">
             {checkins.map((c) => (
-              <Card key={c.id} className="surface-card p-4 space-y-3">
-                <div className="flex items-center justify-between gap-3 flex-wrap">
-                  <div className="flex items-center gap-2 text-xs">
-                    <span className="metric text-muted-foreground">{formatDate(c.week_date)}</span>
-                    <span className="text-muted-foreground">·</span>
-                    <span className="text-muted-foreground">{c.author}</span>
+              <div key={c.id} className="relative">
+                <div className="absolute -left-[19px] top-3 w-3 h-3 rounded-full bg-primary border-2 border-background ring-2 ring-border" />
+                <Card className="surface-card p-4 space-y-3">
+                  <div className="flex items-center justify-between gap-3 flex-wrap">
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="metric text-foreground font-semibold">{formatDate(c.week_date)}</span>
+                      <span className="text-muted-foreground">·</span>
+                      <span className="text-muted-foreground">{c.author}</span>
+                    </div>
+                    <StatusBadge status={c.status_snapshot as InitiativeStatus} />
                   </div>
-                  <StatusBadge status={c.status_snapshot as InitiativeStatus} />
-                </div>
-                <div className="grid md:grid-cols-2 gap-3 text-sm">
-                  {c.progress_delta && <Block label="Avanço">{c.progress_delta}</Block>}
-                  {c.blockers && <Block label="Bloqueios" tone="destructive">{c.blockers}</Block>}
-                  {c.next_steps && <Block label="Próximos passos">{c.next_steps}</Block>}
-                  {c.notes && <Block label="Notas">{c.notes}</Block>}
-                </div>
-              </Card>
+                  {c.progress_delta && <div className="text-sm">{c.progress_delta}</div>}
+                  {c.blockers && <div className="text-sm text-destructive">⚠ {c.blockers}</div>}
+                  {c.next_steps && (
+                    <div className="text-xs text-muted-foreground border-l-2 border-border pl-3">
+                      <span className="uppercase tracking-wider font-semibold">Próximos: </span>{c.next_steps}
+                    </div>
+                  )}
+                </Card>
+              </div>
             ))}
           </div>
         )}
@@ -231,13 +327,6 @@ const Field = ({ label, value }: { label: string; value: string }) => (
   <div>
     <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
     <div className="text-sm font-medium mt-0.5 truncate">{value}</div>
-  </div>
-);
-
-const Block = ({ label, children, tone }: { label: string; children: React.ReactNode; tone?: "destructive" }) => (
-  <div className={`rounded-md border p-3 ${tone === "destructive" ? "border-destructive/30 bg-destructive/5" : "border-border bg-background/40"}`}>
-    <div className={`text-[10px] uppercase tracking-wider mb-1 ${tone === "destructive" ? "text-destructive" : "text-muted-foreground"}`}>{label}</div>
-    <div className="text-sm whitespace-pre-wrap">{children}</div>
   </div>
 );
 
