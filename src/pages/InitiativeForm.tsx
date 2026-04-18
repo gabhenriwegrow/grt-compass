@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CATEGORIES, InitiativeStatus, STATUS_META } from "@/lib/grt";
+import { StatusIcon } from "@/components/StatusBadge";
 import { toast } from "sonner";
 import { ArrowLeft, Save, Trash2 } from "lucide-react";
 
@@ -181,7 +182,9 @@ const InitiativeForm = () => {
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {(Object.keys(STATUS_META) as InitiativeStatus[]).map((s) => (
-                    <SelectItem key={s} value={s}>{STATUS_META[s].emoji} {STATUS_META[s].label}</SelectItem>
+                    <SelectItem key={s} value={s}>
+                      <span className="inline-flex items-center gap-2"><StatusIcon status={s} className="w-3.5 h-3.5" /> {STATUS_META[s].label}</span>
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>

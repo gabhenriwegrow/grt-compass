@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Markdown } from "@/components/Markdown";
 import { CategoryBadge } from "@/components/CategoryBadge";
-import { StatusBadge } from "@/components/StatusBadge";
+import { StatusBadge, StatusIcon } from "@/components/StatusBadge";
 import { InitiativeStatus, STATUS_META, mondayOf } from "@/lib/grt";
 import { Send, Check, X, Pencil, AlertTriangle, Loader2, ArrowRight, Sparkles, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
@@ -651,7 +651,7 @@ const UpdateCard = ({
               <SelectContent>
                 {(Object.keys(STATUS_META) as InitiativeStatus[]).map((s) => (
                   <SelectItem key={s} value={s} className="text-xs">
-                    {STATUS_META[s].emoji} {STATUS_META[s].label}
+                    <span className="inline-flex items-center gap-2"><StatusIcon status={s} className="w-3 h-3" /> {STATUS_META[s].label}</span>
                   </SelectItem>
                 ))}
               </SelectContent>
