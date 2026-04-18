@@ -8,7 +8,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { StatusBadge } from "@/components/StatusBadge";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { MultiSelectFilter } from "@/components/MultiSelectFilter";
-import { CATEGORIES, InitiativeStatus, STATUS_META, formatDate, daysBetween } from "@/lib/grt";
+import { StatusSparkline } from "@/components/StatusSparkline";
+import { CATEGORIES, InitiativeStatus, STATUS_META, formatDate, daysBetween, computeTrend, TREND_META } from "@/lib/grt";
 import { Plus, Search, ChevronDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +24,7 @@ const Initiatives = () => {
   const [rows, setRows] = useState<Row[]>([]);
   const [krs, setKrs] = useState<KR[]>([]);
   const [lastCheckinByInit, setLastCheckinByInit] = useState<Record<string, string>>({});
+  const [checkinsByInit, setCheckinsByInit] = useState<Record<string, Array<{ week_date: string; status_snapshot: string }>>>({});
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
   const [statusF, setStatusF] = useState<string[]>([]);
@@ -36,15 +38,28 @@ const Initiatives = () => {
       const [iRes, kRes, cRes] = await Promise.all([
         supabase.from("initiatives").select("id,number,title,category,status,owner,due_date,description,impediment,key_result_id").order("number"),
         supabase.from("key_results").select("id,code").order("code"),
-        supabase.from("weekly_checkins").select("initiative_id, week_date, created_at").order("created_at", { ascending: false }),
+        supabase.from("weekly_checkins").select("initiative_id, week_date, status_snapshot, created_at").order("week_date", { ascending: true }),
       ]);
       setRows((iRes.data ?? []) as Row[]);
       setKrs((kRes.data ?? []) as KR[]);
-      const map: Record<string, string> = {};
+      // Build per-initiative history (dedupe per week, keep latest by created_at)
+      const histMap: Record<string, Map<string, { week_date: string; status_snapshot: string; created_at: string }>> = {};
       for (const c of (cRes.data ?? []) as any[]) {
-        if (!map[c.initiative_id]) map[c.initiative_id] = c.week_date;
+        const m = (histMap[c.initiative_id] ??= new Map());
+        const existing = m.get(c.week_date);
+        if (!existing || existing.created_at < c.created_at) {
+          m.set(c.week_date, { week_date: c.week_date, status_snapshot: c.status_snapshot, created_at: c.created_at });
+        }
       }
-      setLastCheckinByInit(map);
+      const lastMap: Record<string, string> = {};
+      const histOut: Record<string, Array<{ week_date: string; status_snapshot: string }>> = {};
+      for (const [initId, m] of Object.entries(histMap)) {
+        const arr = Array.from(m.values()).sort((a, b) => a.week_date.localeCompare(b.week_date));
+        histOut[initId] = arr.map(({ week_date, status_snapshot }) => ({ week_date, status_snapshot }));
+        lastMap[initId] = arr[arr.length - 1].week_date;
+      }
+      setLastCheckinByInit(lastMap);
+      setCheckinsByInit(histOut);
       // Default: open all categories
       setOpenCats(Object.fromEntries(CATEGORIES.map((c) => [c, true])));
       setLoading(false);
@@ -181,6 +196,9 @@ const Initiatives = () => {
                     {list.map((r) => {
                       const lastCk = lastCheckinByInit[r.id];
                       const kr = r.key_result_id ? krCodeById[r.key_result_id] : null;
+                      const hist = checkinsByInit[r.id] ?? [];
+                      const trend = computeTrend(hist);
+                      const tMeta = TREND_META[trend];
                       return (
                         <Link key={r.id} to={`/initiatives/${r.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-secondary/30 transition-colors">
                           <div className="metric text-xs text-muted-foreground w-8 shrink-0">#{r.number}</div>
@@ -194,6 +212,12 @@ const Initiatives = () => {
                               </span>
                             </div>
                             {r.impediment && <div className="text-xs text-destructive mt-1">⚠ {r.impediment}</div>}
+                          </div>
+                          <div className="hidden md:flex flex-col items-end gap-1 shrink-0">
+                            <StatusSparkline checkins={hist} currentStatus={r.status} width={120} height={20} />
+                            <span className={cn("text-[10px] font-medium metric", tMeta.color)}>
+                              {tMeta.icon} {tMeta.label}
+                            </span>
                           </div>
                           <StatusBadge status={r.status} />
                         </Link>

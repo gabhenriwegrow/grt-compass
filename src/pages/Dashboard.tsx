@@ -7,13 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { HealthBadge, StatusBadge } from "@/components/StatusBadge";
 import { CategoryBadge } from "@/components/CategoryBadge";
+import { StatusSparkline } from "@/components/StatusSparkline";
 import {
   CATEGORIES, formatBRL, formatBRLShort, Health, InitiativeStatus, MONTH_NAMES_PT,
   STATUS_META, computeObjectiveHealth, computeKrHealth, monthsElapsed, pctOfYearElapsed, parseBRNumber,
+  computeTrend,
 } from "@/lib/grt";
 import { classifyInitiativeRisk, InitiativeWithCheckin } from "@/lib/risks";
 import { Link } from "react-router-dom";
-import { ArrowRight, TrendingUp, Target as TargetIcon, AlertTriangle, Pencil, Calendar } from "lucide-react";
+import { ArrowRight, TrendingUp, Target as TargetIcon, AlertTriangle, Pencil, Calendar, Activity } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { toast } from "sonner";
 
@@ -38,6 +40,7 @@ const Dashboard = () => {
   const [initiatives, setInitiatives] = useState<Initiative[]>([]);
   const [monthlyMrr, setMonthlyMrr] = useState<MonthlyMrr[]>([]);
   const [lastCheckinByInit, setLastCheckinByInit] = useState<Record<string, { date: string; status: InitiativeStatus }>>({});
+  const [checkinsByInit, setCheckinsByInit] = useState<Record<string, Array<{ week_date: string; status_snapshot: string }>>>({});
   const [loading, setLoading] = useState(true);
   const [editingMonth, setEditingMonth] = useState<MonthlyMrr | null>(null);
   const [editingValue, setEditingValue] = useState("");
