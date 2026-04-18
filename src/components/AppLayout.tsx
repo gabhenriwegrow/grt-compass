@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { LayoutDashboard, ListChecks, Target, ClipboardCheck, LogOut, Upload, Sparkles } from "lucide-react";
+import { LayoutDashboard, ListChecks, Target, ClipboardCheck, LogOut, Upload, Sparkles, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -10,6 +10,7 @@ const navItems = [
   { to: "/checkins", icon: ClipboardCheck, label: "Check-ins" },
   { to: "/relatorios", icon: Sparkles, label: "Relatórios" },
   { to: "/import", icon: Upload, label: "Importar" },
+  { to: "/config", icon: Settings, label: "Configurações" },
 ];
 
 export const AppLayout = () => {
