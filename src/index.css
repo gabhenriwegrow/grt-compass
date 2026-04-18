@@ -1,96 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* GRT Command Center — Dark Premium Design System
+   All colors in HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Core dark surfaces */
+    --background: 240 16% 5%;          /* #0A0A0F */
+    --foreground: 210 40% 96%;         /* #F1F5F9 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --surface: 240 16% 9%;             /* #12121A — cards */
+    --surface-elevated: 240 14% 12%;
+    --border: 240 25% 15%;             /* #1E1E2E */
+    --input: 240 25% 15%;
+    --ring: 217 91% 60%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --card: 240 16% 9%;
+    --card-foreground: 210 40% 96%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --popover: 240 16% 7%;
+    --popover-foreground: 210 40% 96%;
+
+    --primary: 217 91% 60%;            /* #3B82F6 */
     --primary-foreground: 210 40% 98%;
+    --primary-glow: 217 91% 70%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 240 14% 14%;
+    --secondary-foreground: 210 40% 96%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 240 12% 14%;
+    --muted-foreground: 215 16% 60%;   /* #94A3B8 */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 240 14% 16%;
+    --accent-foreground: 210 40% 96%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --success: 158 84% 39%;            /* #10B981 */
+    --success-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --warning: 38 92% 50%;             /* #F59E0B */
+    --warning-foreground: 240 16% 5%;
 
-    --radius: 0.5rem;
+    --destructive: 0 84% 60%;          /* #EF4444 */
+    --destructive-foreground: 0 0% 100%;
 
-    --sidebar-background: 0 0% 98%;
+    --info: 217 91% 60%;
+    --neutral: 215 16% 60%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --radius: 0.75rem;
 
-    --sidebar-primary: 240 5.9% 10%;
+    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(217 91% 45%));
+    --gradient-success: linear-gradient(135deg, hsl(158 84% 39%), hsl(158 84% 30%));
+    --gradient-surface: linear-gradient(180deg, hsl(240 16% 10%), hsl(240 16% 7%));
+    --gradient-hero: radial-gradient(circle at 20% 0%, hsl(217 91% 25% / 0.4), transparent 50%),
+                     radial-gradient(circle at 80% 100%, hsl(158 84% 20% / 0.25), transparent 50%);
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    --shadow-card: 0 1px 0 hsl(240 25% 25% / 0.4) inset, 0 8px 24px -8px hsl(240 50% 2% / 0.6);
+    --shadow-elevated: 0 0 0 1px hsl(240 25% 18%), 0 20px 40px -10px hsl(240 50% 2% / 0.8);
+    --shadow-glow: 0 0 32px hsl(217 91% 60% / 0.25);
 
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-background: 240 16% 7%;
+    --sidebar-foreground: 210 40% 90%;
+    --sidebar-primary: 217 91% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 240 14% 12%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 240 25% 15%;
+    --sidebar-ring: 217 91% 60%;
   }
 }
 
@@ -98,8 +78,38 @@ All colors MUST be HSL.
   * {
     @apply border-border;
   }
-
-  body {
-    @apply bg-background text-foreground;
+  html, body, #root {
+    min-height: 100vh;
   }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    background-image: var(--gradient-hero);
+    background-attachment: fixed;
+  }
+  .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-feature-settings: "tnum" 1, "ss01" 1;
+  }
+  .metric {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer components {
+  .surface-card {
+    @apply bg-card border border-border rounded-xl;
+    box-shadow: var(--shadow-card);
+  }
+  .surface-elevated {
+    background: var(--gradient-surface);
+    @apply border border-border rounded-xl;
+    box-shadow: var(--shadow-elevated);
+  }
+  .status-dot {
+    @apply inline-block w-2 h-2 rounded-full;
+  }
+  .glow-primary { box-shadow: var(--shadow-glow); }
 }
