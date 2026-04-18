@@ -1,11 +1,12 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { LayoutDashboard, ListChecks, ClipboardCheck, LogOut, Upload, Sparkles, Settings } from "lucide-react";
+import { LayoutDashboard, ListChecks, ClipboardCheck, LogOut, Upload, Sparkles, Settings, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/chat", icon: MessageSquare, label: "Atualizar" },
   { to: "/initiatives", icon: ListChecks, label: "Iniciativas" },
   { to: "/checkins", icon: ClipboardCheck, label: "Check-ins" },
   { to: "/relatorios", icon: Sparkles, label: "Relatórios" },

@@ -11,6 +11,7 @@ import Initiatives from "./pages/Initiatives";
 import InitiativeForm from "./pages/InitiativeForm";
 import InitiativeDetail from "./pages/InitiativeDetail";
 import Checkins from "./pages/Checkins";
+import Chat from "./pages/Chat";
 import Reports from "./pages/Reports";
 import Import from "./pages/Import";
 import Config from "./pages/Config";
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/relatorio/:token" element={<SharedReport />} />
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/chat" element={<Chat />} />
               <Route path="/initiatives" element={<Initiatives />} />
               <Route path="/initiatives/new" element={<InitiativeForm />} />
               <Route path="/initiatives/:id" element={<InitiativeDetail />} />
