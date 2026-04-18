@@ -15,7 +15,7 @@ import {
 } from "@/lib/grt";
 import { classifyInitiativeRisk, InitiativeWithCheckin } from "@/lib/risks";
 import { Link } from "react-router-dom";
-import { ArrowRight, TrendingUp, Target as TargetIcon, AlertTriangle, Pencil, Calendar, Activity } from "lucide-react";
+import { ArrowRight, TrendingUp, Target as TargetIcon, AlertTriangle, Pencil, Calendar, Activity, MessageSquare } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { toast } from "sonner";
 
@@ -164,7 +164,16 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="container py-6 md:py-10 space-y-8">
+    <div className="container py-6 md:py-10 space-y-8 relative">
+      {/* Floating chat update FAB */}
+      <Link
+        to="/chat"
+        className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 bg-[#9B26B6] hover:bg-[#8A22A3] text-white rounded-full pl-4 pr-5 py-3 text-sm font-semibold shadow-elevated transition-colors"
+        title="Atualizar por chat"
+      >
+        <MessageSquare className="w-4 h-4" />
+        <span className="hidden sm:inline">Atualizar por chat</span>
+      </Link>
       {/* Hero objective */}
       <section className="surface-elevated p-6 md:p-10 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-hero opacity-50 pointer-events-none" />
