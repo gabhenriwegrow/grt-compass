@@ -12,8 +12,9 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { Markdown } from "@/components/Markdown";
 import { GenerateReportButton } from "@/components/GenerateReportButton";
+import { ShareReportDialog } from "@/components/ShareReportDialog";
 import { CATEGORIES, InitiativeStatus, STATUS_META, formatDate, mondayOf, sundayOf } from "@/lib/grt";
-import { ChevronDown, Sparkles, Calendar } from "lucide-react";
+import { ChevronDown, Sparkles, Calendar, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -164,8 +165,20 @@ const Checkins = () => {
 
       {report && (
         <Card className="surface-elevated p-5 border-primary/30">
-          <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-primary mb-3">
-            <Sparkles className="w-3 h-3" /> Resumo semanal · gerado {formatDate(report.generated_at)}
+          <div className="flex items-center justify-between gap-2 flex-wrap mb-3">
+            <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-primary">
+              <Sparkles className="w-3 h-3" /> Resumo semanal · gerado {formatDate(report.generated_at)}
+            </div>
+            <ShareReportDialog
+              reportId={report.id}
+              reportType="weekly_summary"
+              weekDate={report.week_date}
+              trigger={
+                <Button size="sm" variant="outline">
+                  <Share2 className="w-3.5 h-3.5 mr-1.5" /> Enviar para Bruno
+                </Button>
+              }
+            />
           </div>
           <Markdown content={report.content} />
         </Card>
