@@ -57,11 +57,24 @@ const Dashboard = () => {
     setKrs((krRes.data ?? []) as KR[]);
     setInitiatives((initRes.data ?? []) as Initiative[]);
     setMonthlyMrr((mrrRes.data ?? []) as MonthlyMrr[]);
-    const map: Record<string, { date: string; status: InitiativeStatus }> = {};
+    // Build last-checkin map AND per-initiative chronological history (oldest -> newest, deduped per week)
+    const lastMap: Record<string, { date: string; status: InitiativeStatus }> = {};
+    const histMap: Record<string, Map<string, { week_date: string; status_snapshot: string; created_at: string }>> = {};
     for (const c of (ckRes.data ?? []) as any[]) {
-      if (!map[c.initiative_id]) map[c.initiative_id] = { date: c.week_date, status: c.status_snapshot };
+      if (!lastMap[c.initiative_id]) lastMap[c.initiative_id] = { date: c.week_date, status: c.status_snapshot };
+      const m = (histMap[c.initiative_id] ??= new Map());
+      const existing = m.get(c.week_date);
+      if (!existing || existing.created_at < c.created_at) {
+        m.set(c.week_date, { week_date: c.week_date, status_snapshot: c.status_snapshot, created_at: c.created_at });
+      }
     }
-    setLastCheckinByInit(map);
+    const histOut: Record<string, Array<{ week_date: string; status_snapshot: string }>> = {};
+    for (const [initId, m] of Object.entries(histMap)) {
+      const arr = Array.from(m.values()).sort((a, b) => a.week_date.localeCompare(b.week_date));
+      histOut[initId] = arr.map(({ week_date, status_snapshot }) => ({ week_date, status_snapshot }));
+    }
+    setLastCheckinByInit(lastMap);
+    setCheckinsByInit(histOut);
     setLoading(false);
   };
 
