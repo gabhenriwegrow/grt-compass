@@ -168,7 +168,7 @@ const Dashboard = () => {
       {/* Floating chat update FAB */}
       <Link
         to="/chat"
-        className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 bg-[#9B26B6] hover:bg-[#8A22A3] text-white rounded-full pl-4 pr-5 py-3 text-sm font-medium shadow-elevated transition-colors"
+        className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 bg-[#0C2340] hover:bg-[#1A3A5C] text-white rounded-lg px-4 py-3 text-sm font-medium shadow-md transition-colors"
         title="Atualizar por chat"
       >
         <MessageSquare className="w-4 h-4" />
@@ -178,9 +178,9 @@ const Dashboard = () => {
       <section className="surface-elevated p-8 md:p-12 relative overflow-hidden">
         <div className="relative space-y-7">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-[11px] font-medium text-[#878787] tracking-widest uppercase">Objetivo {objective?.timeframe ?? "2026"}</span>
+            <span className="text-[11px] font-mono text-[#878787] tracking-wider uppercase">Objetivo {objective?.timeframe ?? "2026"}</span>
             <HealthBadge health={computedHealth} />
-            {objective && <span className="text-[12px] text-[#878787]">Confiança <span className="text-[#0C2340] metric font-semibold">{objective.confidence}%</span></span>}
+            {objective && <span className="text-xs text-[#878787]">Confiança <span className="text-[#0C2340] font-semibold">{objective.confidence}%</span></span>}
           </div>
           <h1 className="text-[24px] md:text-[32px] font-semibold text-[#0C2340] leading-tight tracking-tight max-w-3xl">
             {objective?.statement ?? "—"}
@@ -194,23 +194,22 @@ const Dashboard = () => {
           </div>
 
           {/* Dual progress */}
-          <div className="rounded-lg bg-white border border-[rgba(12,35,64,0.06)] p-5 space-y-3">
-            <div className="text-[11px] text-[#878787] uppercase tracking-widest font-medium">Ano vs Meta</div>
+          <div className="rounded-lg bg-[#F8F9FB] p-5 space-y-3">
             <div className="space-y-1.5">
-              <div className="flex justify-between text-[12px]">
+              <div className="flex justify-between text-xs">
                 <span className="text-[#3D4F66]">Ano transcorrido</span>
-                <span className="metric font-semibold text-[#0C2340]">{yearPct}%</span>
+                <span className="font-semibold text-[#0C2340]">{yearPct}%</span>
               </div>
-              <Progress value={yearPct} className="h-1.5 [&>div]:bg-[#9EA7B3]" />
+              <Progress value={yearPct} className="h-1 [&>div]:bg-[#9EA7B3]" />
             </div>
             <div className="space-y-1.5">
-              <div className="flex justify-between text-[12px]">
+              <div className="flex justify-between text-xs">
                 <span className="text-[#3D4F66]">Meta atingida</span>
-                <span className={`metric font-semibold ${goalPct >= yearPct ? "text-[#2D7D46]" : "text-[#B07D1A]"}`}>{goalPct}%</span>
+                <span className={`font-semibold ${goalPct >= yearPct ? "text-[#2D7D46]" : "text-[#B07D1A]"}`}>{goalPct}%</span>
               </div>
-              <Progress value={goalPct} className="h-1.5" />
+              <Progress value={goalPct} className="h-1" />
             </div>
-            <div className="text-[12px] text-[#878787]">
+            <div className="text-xs text-[#878787]">
               {goalPct >= yearPct
                 ? `No ritmo: meta atingida (${goalPct}%) ≥ ano transcorrido (${yearPct}%)`
                 : `Atrás do ritmo: faltam ${yearPct - goalPct}pp para acompanhar o ano`}
@@ -218,6 +217,7 @@ const Dashboard = () => {
           </div>
         </div>
       </section>
+
 
       {/* KRs */}
       <section className="space-y-3">
