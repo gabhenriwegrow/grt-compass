@@ -46,28 +46,34 @@ export const AppLayout = () => {
             </div>
           </div>
         </div>
-        <nav className="flex-1 p-3 space-y-1">
-          {navItems.map(({ to, icon: Icon, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={to === "/"}
-              className={({ isActive }) =>
-                cn(
-                  "flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-all",
-                  isActive
-                    ? "text-white bg-[#9B26B6]/20 border-l-[3px] border-[#9B26B6] pl-[9px]"
-                    : "text-sidebar-foreground hover:bg-white/[0.06] hover:text-white"
-                )
-              }
-            >
-              <Icon className="w-4 h-4" />
-              {label}
-            </NavLink>
-          ))}
+        <nav className="flex-1 p-3 space-y-0.5">
+          {navItems.map(({ to, icon: Icon, label }, idx) => {
+            const isUtility = to === "/config" || to === "/import";
+            const prevIsUtility = idx > 0 && (navItems[idx - 1].to === "/config" || navItems[idx - 1].to === "/import");
+            const needsSeparator = isUtility && !prevIsUtility;
+            return (
+              <NavLink
+                key={to}
+                to={to}
+                end={to === "/"}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center gap-2.5 px-4 py-2.5 rounded-md text-[13px] font-medium transition-all",
+                    needsSeparator && "mt-6",
+                    isActive
+                      ? "text-white bg-white/[0.08] border-l-2 border-[#9B26B6] pl-[14px]"
+                      : "text-sidebar-foreground hover:bg-white/[0.04] hover:text-white"
+                  )
+                }
+              >
+                <Icon className="w-[18px] h-[18px]" />
+                {label}
+              </NavLink>
+            );
+          })}
         </nav>
         <div className="p-3 border-t border-sidebar-border space-y-2">
-          <div className="px-3 py-2 text-xs text-sidebar-foreground truncate">{user?.email}</div>
+          <div className="px-3 py-2 text-[11px] text-sidebar-foreground truncate">{user?.email}</div>
           <Button variant="ghost" size="sm" className="w-full justify-start text-sidebar-foreground hover:bg-white/[0.06] hover:text-white" onClick={handleSignOut}>
             <LogOut className="w-4 h-4 mr-2" /> Sair
           </Button>
