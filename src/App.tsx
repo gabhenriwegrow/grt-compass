@@ -15,6 +15,7 @@ import Reports from "./pages/Reports";
 import Import from "./pages/Import";
 import Config from "./pages/Config";
 import Auth from "./pages/Auth";
+import SharedReport from "./pages/SharedReport";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/relatorio/:token" element={<SharedReport />} />
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/initiatives" element={<Initiatives />} />
