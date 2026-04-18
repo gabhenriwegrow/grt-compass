@@ -240,6 +240,47 @@ export type Database = {
         }
         Relationships: []
       }
+      shared_reports: {
+        Row: {
+          ai_report_id: string
+          created_at: string | null
+          created_by: string
+          expires_at: string | null
+          id: string
+          title: string
+          token: string
+          view_count: number | null
+        }
+        Insert: {
+          ai_report_id: string
+          created_at?: string | null
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          title: string
+          token?: string
+          view_count?: number | null
+        }
+        Update: {
+          ai_report_id?: string
+          created_at?: string | null
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          title?: string
+          token?: string
+          view_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shared_reports_ai_report_id_fkey"
+            columns: ["ai_report_id"]
+            isOneToOne: false
+            referencedRelation: "ai_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       weekly_checkins: {
         Row: {
           author: string

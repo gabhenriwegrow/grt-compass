@@ -113,3 +113,23 @@
   }
   .glow-primary { box-shadow: var(--shadow-glow); }
 }
+
+@media print {
+  html, body { background: white !important; color: black !important; background-image: none !important; }
+  .no-print { display: none !important; }
+  .shared-report-page { background: white !important; }
+  .surface-card, .surface-elevated, .bg-card, [class*="bg-card"] {
+    background: white !important;
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+  }
+  .prose-invert { color: black !important; }
+  .prose-invert h1, .prose-invert h2, .prose-invert h3, .prose-invert h4 { color: #1a1a1a !important; }
+  .prose-invert p, .prose-invert li { color: #333 !important; }
+  .prose-invert strong { color: #000 !important; }
+  .prose-invert code { background: #f0f0f0 !important; color: #333 !important; }
+  .prose-invert hr { border-color: #ddd !important; }
+  .text-muted-foreground { color: #555 !important; }
+  .text-foreground { color: #000 !important; }
+  @page { margin: 1.5cm; }
+}

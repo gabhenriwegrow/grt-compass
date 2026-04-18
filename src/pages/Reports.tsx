@@ -3,9 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Markdown } from "@/components/Markdown";
 import { GenerateReportButton } from "@/components/GenerateReportButton";
+import { ShareReportDialog } from "@/components/ShareReportDialog";
 import { formatDate } from "@/lib/grt";
-import { ArrowLeft, FileText, ClipboardCheck, Sparkles, Briefcase } from "lucide-react";
+import { ArrowLeft, FileText, ClipboardCheck, Sparkles, Briefcase, Share2, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { toast } from "sonner";
 
 type Report = {
   id: string;
@@ -26,6 +29,7 @@ const Reports = () => {
   const [reports, setReports] = useState<Report[]>([]);
   const [active, setActive] = useState<Report | null>(null);
   const [titlesByScope, setTitlesByScope] = useState<Record<string, string>>({});
+  const [sharedMap, setSharedMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
   const load = async () => {
@@ -49,6 +53,21 @@ const Reports = () => {
       for (const i of inits ?? []) map[i.id] = i.title;
       setTitlesByScope(map);
     }
+
+    // fetch shared reports for indicators
+    const reportIds = list.map((r) => r.id);
+    if (reportIds.length) {
+      const { data: shares } = await supabase
+        .from("shared_reports")
+        .select("ai_report_id, token, created_at")
+        .in("ai_report_id", reportIds)
+        .order("created_at", { ascending: false });
+      const sm: Record<string, string> = {};
+      for (const s of shares ?? []) {
+        if (!sm[s.ai_report_id]) sm[s.ai_report_id] = s.token; // most recent first
+      }
+      setSharedMap(sm);
+    }
     setLoading(false);
   };
 
@@ -59,9 +78,21 @@ const Reports = () => {
     const Icon = meta.icon;
     return (
       <div className="container py-6 md:py-10 max-w-4xl space-y-5">
-        <Button variant="ghost" size="sm" onClick={() => setActive(null)}>
-          <ArrowLeft className="w-4 h-4 mr-1.5" /> Voltar para relatórios
-        </Button>
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <Button variant="ghost" size="sm" onClick={() => setActive(null)}>
+            <ArrowLeft className="w-4 h-4 mr-1.5" /> Voltar para relatórios
+          </Button>
+          <ShareReportDialog
+            reportId={active.id}
+            reportType={active.report_type}
+            weekDate={active.week_date}
+            trigger={
+              <Button size="sm" variant="outline">
+                <Share2 className="w-4 h-4 mr-1.5" /> Compartilhar
+              </Button>
+            }
+          />
+        </div>
         <Card className="surface-elevated p-6 md:p-8 space-y-4">
           <div className="flex items-center gap-2 flex-wrap">
             <span className={`inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold ${meta.color}`}>
@@ -114,6 +145,7 @@ const Reports = () => {
                   ? titlesByScope[r.scope] ?? "Iniciativa"
                   : "Visão consolidada do objetivo, KRs e iniciativas";
             const preview = r.content.replace(/[#*`_>]/g, "").replace(/\s+/g, " ").trim().slice(0, 220);
+            const sharedToken = sharedMap[r.id];
             return (
               <button
                 key={r.id}
@@ -125,7 +157,31 @@ const Reports = () => {
                     <div className={`flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold ${meta.color}`}>
                       <Icon className="w-3 h-3" /> {meta.label}
                     </div>
-                    <div className="font-semibold truncate">{subtitle}</div>
+                    <div className="font-semibold truncate flex items-center gap-2">
+                      {subtitle}
+                      {sharedToken && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span
+                              role="button"
+                              tabIndex={0}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const url = `${window.location.origin}/relatorio/${sharedToken}`;
+                                navigator.clipboard.writeText(url).then(
+                                  () => toast.success("Link copiado!"),
+                                  () => toast.error("Não foi possível copiar"),
+                                );
+                              }}
+                              className="inline-flex items-center text-primary/80 hover:text-primary"
+                            >
+                              <Link2 className="w-3.5 h-3.5" />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>Compartilhado — clique para copiar link</TooltipContent>
+                        </Tooltip>
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground line-clamp-2">{preview}…</p>
                   </div>
                   <span className="text-xs text-muted-foreground metric whitespace-nowrap">
