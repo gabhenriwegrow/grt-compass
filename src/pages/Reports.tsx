@@ -3,9 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Markdown } from "@/components/Markdown";
 import { GenerateReportButton } from "@/components/GenerateReportButton";
+import { ShareReportDialog } from "@/components/ShareReportDialog";
 import { formatDate } from "@/lib/grt";
-import { ArrowLeft, FileText, ClipboardCheck, Sparkles, Briefcase } from "lucide-react";
+import { ArrowLeft, FileText, ClipboardCheck, Sparkles, Briefcase, Share2, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { toast } from "sonner";
 
 type Report = {
   id: string;
@@ -26,6 +29,7 @@ const Reports = () => {
   const [reports, setReports] = useState<Report[]>([]);
   const [active, setActive] = useState<Report | null>(null);
   const [titlesByScope, setTitlesByScope] = useState<Record<string, string>>({});
+  const [sharedMap, setSharedMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
   const load = async () => {
@@ -48,6 +52,21 @@ const Reports = () => {
       const map: Record<string, string> = {};
       for (const i of inits ?? []) map[i.id] = i.title;
       setTitlesByScope(map);
+    }
+
+    // fetch shared reports for indicators
+    const reportIds = list.map((r) => r.id);
+    if (reportIds.length) {
+      const { data: shares } = await supabase
+        .from("shared_reports")
+        .select("ai_report_id, token, created_at")
+        .in("ai_report_id", reportIds)
+        .order("created_at", { ascending: false });
+      const sm: Record<string, string> = {};
+      for (const s of shares ?? []) {
+        if (!sm[s.ai_report_id]) sm[s.ai_report_id] = s.token; // most recent first
+      }
+      setSharedMap(sm);
     }
     setLoading(false);
   };
