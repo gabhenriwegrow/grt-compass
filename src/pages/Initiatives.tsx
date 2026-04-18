@@ -161,7 +161,7 @@ const Initiatives = () => {
           <p className="text-muted-foreground text-sm">Nenhuma iniciativa encontrada com os filtros atuais.</p>
         </Card>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {CATEGORIES.map((cat) => {
             const list = groupedByCat[cat];
             if (!list.length) return null;
@@ -176,23 +176,23 @@ const Initiatives = () => {
                 onOpenChange={(o) => setOpenCats((p) => ({ ...p, [cat]: o }))}
                 className="surface-card overflow-hidden"
               >
-                <CollapsibleTrigger className="w-full flex items-center justify-between gap-3 p-4 hover:bg-secondary/30 transition-colors">
+                <CollapsibleTrigger className="w-full flex items-center justify-between gap-3 p-4 hover:bg-[#F8F9FB] transition-colors">
                   <div className="flex items-center gap-3 min-w-0">
-                    <ChevronDown className={cn("w-4 h-4 transition-transform shrink-0", !isOpen && "-rotate-90")} />
+                    <ChevronDown className={cn("w-4 h-4 transition-transform shrink-0 text-[#9EA7B3]", !isOpen && "-rotate-90")} />
                     <CategoryBadge category={cat} />
-                    <span className="text-xs text-muted-foreground metric">{list.length} iniciativas</span>
+                    <span className="text-[12px] text-[#878787] metric">{list.length} iniciativas</span>
                   </div>
                   <div className="flex flex-wrap items-center gap-1.5">
                     {statusCounts.map(({ s, n }) => (
-                      <span key={s} className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-secondary/40 border border-border">
+                      <span key={s} className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-[#F8F9FB] border border-[rgba(12,35,64,0.06)]">
                         <span className={`status-dot ${STATUS_META[s].dot}`} />
-                        <span className="metric font-semibold">{n}</span>
+                        <span className="metric font-semibold text-[#3D4F66]">{n}</span>
                       </span>
                     ))}
                   </div>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <div className="divide-y divide-border border-t border-border">
+                  <div className="divide-y divide-[#F3F4F6] border-t border-[#F3F4F6]">
                     {list.map((r) => {
                       const lastCk = lastCheckinByInit[r.id];
                       const kr = r.key_result_id ? krCodeById[r.key_result_id] : null;
@@ -200,18 +200,18 @@ const Initiatives = () => {
                       const trend = computeTrend(hist);
                       const tMeta = TREND_META[trend];
                       return (
-                        <Link key={r.id} to={`/initiatives/${r.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-secondary/30 transition-colors">
-                          <div className="metric text-xs text-muted-foreground w-8 shrink-0">#{r.number}</div>
+                        <Link key={r.id} to={`/initiatives/${r.id}`} className="flex items-center gap-3 px-5 py-4 hover:bg-[#F8F9FB] transition-colors">
+                          <div className="metric text-[12px] text-[#9EA7B3] w-8 shrink-0">#{r.number}</div>
                           <div className="min-w-0 flex-1">
-                            <div className="text-sm font-medium truncate">{r.title}</div>
-                            <div className="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-muted-foreground">
+                            <div className="text-[14px] font-medium text-[#0C2340] truncate">{r.title}</div>
+                            <div className="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-[#878787]">
                               {r.owner && <span>{r.owner}</span>}
-                              {kr && <span className="metric text-primary font-semibold">{kr}</span>}
-                              <span className={cn(lastCk ? "text-muted-foreground" : "text-destructive font-semibold")}>
+                              {kr && <span className="metric text-[#0C2340] font-semibold">{kr}</span>}
+                              <span className={cn(lastCk ? "text-[#878787]" : "text-[#C0392B] font-medium")}>
                                 {lastCk ? `Último check-in: ${formatDate(lastCk)} (${daysBetween(lastCk)}d)` : "Sem check-ins"}
                               </span>
                             </div>
-                            {r.impediment && <div className="text-xs text-destructive mt-1">⚠ {r.impediment}</div>}
+                            {r.impediment && <div className="text-[12px] text-[#C0392B]/80 mt-1">{r.impediment}</div>}
                           </div>
                           <div className="hidden md:flex flex-col items-end gap-1 shrink-0">
                             <StatusSparkline checkins={hist} currentStatus={r.status} width={120} height={20} />

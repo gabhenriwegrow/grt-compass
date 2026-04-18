@@ -8,7 +8,7 @@ import { Markdown } from "@/components/Markdown";
 import { CategoryBadge } from "@/components/CategoryBadge";
 import { StatusBadge, StatusIcon } from "@/components/StatusBadge";
 import { InitiativeStatus, STATUS_META, mondayOf } from "@/lib/grt";
-import { Send, Check, X, Pencil, AlertTriangle, Loader2, ArrowRight, Sparkles, CheckCircle2 } from "lucide-react";
+import { Send, Check, X, Pencil, AlertTriangle, Loader2, ArrowRight, Sparkles, CheckCircle2, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -352,7 +352,7 @@ const Chat = () => {
               onClick={send}
               disabled={sending || !input.trim()}
               size="icon"
-              className="bg-[#9B26B6] hover:bg-[#8A22A3] text-white rounded-full h-11 w-11 shrink-0"
+              className="bg-[#9B26B6] hover:bg-[#8A22A3] text-white rounded-lg h-9 w-9 shrink-0"
             >
               {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             </Button>
@@ -370,18 +370,18 @@ const WelcomeCard = () => (
   <Card className="p-6 border border-border bg-card">
     <div className="flex items-start gap-3">
       <div className="w-10 h-10 rounded-lg bg-[#9B26B6]/10 flex items-center justify-center shrink-0">
-        <Sparkles className="w-5 h-5 text-[#9B26B6]" />
+        <MessageSquare className="w-5 h-5 text-[#9B26B6]" />
       </div>
       <div className="space-y-3">
         <div>
-          <h2 className="text-base font-bold text-[#0C2340]">Atualize suas iniciativas conversando</h2>
+          <h2 className="text-base font-semibold text-[#0C2340]">Atualize suas iniciativas conversando</h2>
           <p className="text-sm text-muted-foreground mt-1">
             Digite em texto livre o que avançou, o que está bloqueado e próximos passos. A IA identifica
             automaticamente as iniciativas e estrutura os check-ins para você confirmar.
           </p>
         </div>
-        <div className="bg-[#F5F7FA] border border-border rounded-lg p-3">
-          <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1.5">
+        <div className="bg-[#F8F9FB] border border-[rgba(12,35,64,0.06)] rounded-lg p-3">
+          <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium mb-1.5">
             Exemplo
           </div>
           <p className="text-sm text-[#0C2340] italic leading-relaxed">
@@ -390,7 +390,7 @@ const WelcomeCard = () => (
           </p>
         </div>
         <p className="text-xs text-muted-foreground">
-          Você também pode <span className="font-semibold">perguntar</span>: "o que está bloqueado?", "o que a
+          Você também pode <span className="font-medium text-[#0C2340]">perguntar</span>: "o que está bloqueado?", "o que a
           Isabela tem?", "o que falta atualizar?"
         </p>
       </div>
@@ -400,7 +400,7 @@ const WelcomeCard = () => (
 
 const UserBubble = ({ message }: { message: ChatMessage }) => (
   <div className="flex flex-col items-end">
-    <div className="bg-[#0C2340] text-white rounded-2xl rounded-br-sm px-4 py-2.5 max-w-[85%] text-sm whitespace-pre-wrap">
+    <div className="bg-[#0C2340] text-white rounded-2xl rounded-br-md px-4 py-3 max-w-[85%] text-[14px] leading-relaxed whitespace-pre-wrap">
       {message.content}
     </div>
     <span className="text-[10px] text-muted-foreground mt-1 mr-1 tabular-nums">
