@@ -25,6 +25,7 @@ const InitiativeDetail = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<Initiative | null>(null);
   const [checkins, setCheckins] = useState<Checkin[]>([]);
+  const [aiReport, setAiReport] = useState<{ id: string; content: string; generated_at: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
 
@@ -37,12 +38,21 @@ const InitiativeDetail = () => {
   const [saving, setSaving] = useState(false);
 
   const load = async () => {
-    const [iRes, cRes] = await Promise.all([
+    const [iRes, cRes, rRes] = await Promise.all([
       supabase.from("initiatives").select("*").eq("id", id!).maybeSingle(),
       supabase.from("weekly_checkins").select("*").eq("initiative_id", id!).order("week_date", { ascending: false }),
+      supabase
+        .from("ai_reports")
+        .select("id,content,generated_at")
+        .eq("report_type", "initiative_analysis")
+        .eq("scope", id!)
+        .order("generated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
     ]);
     setData(iRes.data);
     setCheckins((cRes.data ?? []) as Checkin[]);
+    setAiReport(rRes.data as any);
     if (iRes.data) setStatusSnap(iRes.data.status as InitiativeStatus);
     setLoading(false);
   };
