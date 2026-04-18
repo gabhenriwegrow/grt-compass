@@ -147,7 +147,7 @@ const Config = () => {
                 </div>
               </div>
               <div className="flex justify-end">
-                <Button onClick={saveObjective} className="bg-gradient-primary"><Save className="w-4 h-4 mr-1.5" /> Salvar</Button>
+                <Button onClick={saveObjective} className="bg-[#0C2340] hover:bg-[#1A3A5C]"><Save className="w-4 h-4 mr-1.5" /> Salvar</Button>
               </div>
             </Card>
           )}
@@ -196,7 +196,7 @@ const Config = () => {
               ))}
             </div>
             <div className="flex justify-end">
-              <Button onClick={saveAllMrr} className="bg-gradient-primary"><Save className="w-4 h-4 mr-1.5" /> Salvar tudo</Button>
+              <Button onClick={saveAllMrr} className="bg-[#0C2340] hover:bg-[#1A3A5C]"><Save className="w-4 h-4 mr-1.5" /> Salvar tudo</Button>
             </div>
           </Card>
         </TabsContent>
@@ -207,7 +207,7 @@ const Config = () => {
               <h3 className="text-sm font-bold">Adicionar nova iniciativa</h3>
               <p className="text-xs text-muted-foreground">Formulário completo em página dedicada.</p>
             </div>
-            <Button asChild className="bg-gradient-primary">
+            <Button asChild className="bg-[#0C2340] hover:bg-[#1A3A5C]">
               <Link to="/initiatives/new"><Plus className="w-4 h-4 mr-1.5" /> Nova iniciativa</Link>
             </Button>
           </Card>

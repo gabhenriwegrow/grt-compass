@@ -10,10 +10,10 @@ export const STATUS_META: Record<InitiativeStatus, { label: string; color: strin
 };
 
 export const HEALTH_META: Record<Health, { label: string; color: string; bg: string; iconName: string }> = {
-  on_track:  { label: "On track",   color: "text-[#2D7D46]", bg: "bg-[#2D7D46]/8 border-[#2D7D46]/20", iconName: "CheckCircle2" },
-  at_risk:   { label: "Em risco",   color: "text-[#B07D1A]", bg: "bg-[#B07D1A]/8 border-[#B07D1A]/20", iconName: "AlertTriangle" },
-  off_track: { label: "Off track",  color: "text-[#C0392B]", bg: "bg-[#C0392B]/8 border-[#C0392B]/20", iconName: "XCircle" },
-  achieved:  { label: "Atingido",   color: "text-[#2D7D46]", bg: "bg-[#2D7D46]/8 border-[#2D7D46]/20", iconName: "CheckCircle2" },
+  on_track:  { label: "No caminho",   color: "text-[#2D7D46]", bg: "bg-[#2D7D46]/[0.06]", iconName: "CheckCircle2" },
+  at_risk:   { label: "Em risco",     color: "text-[#B07D1A]", bg: "bg-[#B07D1A]/[0.06]", iconName: "AlertTriangle" },
+  off_track: { label: "Fora do alvo", color: "text-[#C0392B]", bg: "bg-[#C0392B]/[0.06]", iconName: "XCircle" },
+  achieved:  { label: "Atingido",     color: "text-[#2D7D46]", bg: "bg-[#2D7D46]/[0.06]", iconName: "CheckCircle2" },
 };
 
 export const CATEGORIES = [

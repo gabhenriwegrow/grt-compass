@@ -265,7 +265,7 @@ const InitiativeDetail = () => {
             <h2 className="text-lg font-bold tracking-tight">Timeline de check-ins</h2>
             <p className="text-xs text-muted-foreground">{checkins.length} registros · mais recente primeiro</p>
           </div>
-          <Button onClick={() => setOpen((o) => !o)} className="bg-gradient-primary">
+          <Button onClick={() => setOpen((o) => !o)} className="bg-[#0C2340] hover:bg-[#1A3A5C]">
             <Plus className="w-4 h-4 mr-1.5" /> Novo check-in
           </Button>
         </div>
@@ -303,7 +303,7 @@ const InitiativeDetail = () => {
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Cancelar</Button>
-                <Button type="submit" disabled={saving} className="bg-gradient-primary">{saving ? "Salvando…" : "Salvar check-in"}</Button>
+                <Button type="submit" disabled={saving} className="bg-[#0C2340] hover:bg-[#1A3A5C]">{saving ? "Salvando…" : "Salvar check-in"}</Button>
               </div>
             </form>
           </Card>

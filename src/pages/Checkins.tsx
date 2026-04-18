@@ -239,7 +239,7 @@ const Checkins = () => {
               size="sm"
               onGenerated={() => loadReport(week)}
             />
-            <Button onClick={saveAll} disabled={saving || updatedCount === 0} className="bg-gradient-primary">
+            <Button onClick={saveAll} disabled={saving || updatedCount === 0} className="bg-[#0C2340] hover:bg-[#1A3A5C]">
               {saving ? "Salvando…" : `Salvar todos os check-ins (${updatedCount})`}
             </Button>
           </div>

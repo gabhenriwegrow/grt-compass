@@ -166,7 +166,7 @@ export const ShareReportDialog = ({ reportId, reportType, weekDate, trigger }: P
               )}
             </div>
 
-            <Button onClick={generate} disabled={loading || !title.trim()} className="w-full bg-gradient-primary">
+            <Button onClick={generate} disabled={loading || !title.trim()} className="w-full bg-[#0C2340] hover:bg-[#1A3A5C]">
               {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Link2 className="w-4 h-4 mr-2" />}
               Gerar link
             </Button>

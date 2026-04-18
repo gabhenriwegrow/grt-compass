@@ -89,7 +89,6 @@ export default {
       boxShadow: {
         card: "var(--shadow-card)",
         elevated: "var(--shadow-elevated)",
-        glow: "var(--shadow-glow)",
       },
       keyframes: {
         "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },

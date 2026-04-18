@@ -111,7 +111,7 @@ const Initiatives = () => {
             Exibindo <span className="metric text-foreground font-semibold">{filtered.length}</span> de {rows.length} iniciativas
           </p>
         </div>
-        <Button asChild className="bg-gradient-primary">
+        <Button asChild className="bg-[#0C2340] hover:bg-[#1A3A5C]">
           <Link to="/initiatives/new"><Plus className="w-4 h-4 mr-1.5" /> Nova iniciativa</Link>
         </Button>
       </div>
@@ -166,9 +166,6 @@ const Initiatives = () => {
             const list = groupedByCat[cat];
             if (!list.length) return null;
             const isOpen = openCats[cat] ?? true;
-            const statusCounts = (Object.keys(STATUS_META) as InitiativeStatus[]).map((s) => ({
-              s, n: list.filter((r) => r.status === s).length,
-            })).filter((x) => x.n > 0);
             return (
               <Collapsible
                 key={cat}
@@ -176,48 +173,44 @@ const Initiatives = () => {
                 onOpenChange={(o) => setOpenCats((p) => ({ ...p, [cat]: o }))}
                 className="surface-card overflow-hidden"
               >
-                <CollapsibleTrigger className="w-full flex items-center justify-between gap-3 p-4 hover:bg-[#F8F9FB] transition-colors">
+                <CollapsibleTrigger className="w-full flex items-center justify-between gap-3 px-5 py-4 hover:bg-[#F8F9FB] transition-colors">
                   <div className="flex items-center gap-3 min-w-0">
                     <ChevronDown className={cn("w-4 h-4 transition-transform shrink-0 text-[#9EA7B3]", !isOpen && "-rotate-90")} />
-                    <CategoryBadge category={cat} />
-                    <span className="text-[12px] text-[#878787] metric">{list.length} iniciativas</span>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    {statusCounts.map(({ s, n }) => (
-                      <span key={s} className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-[#F8F9FB] border border-[rgba(12,35,64,0.06)]">
-                        <span className={`status-dot ${STATUS_META[s].dot}`} />
-                        <span className="metric font-semibold text-[#3D4F66]">{n}</span>
-                      </span>
-                    ))}
+                    <span className="text-sm font-semibold text-[#0C2340]">{cat}</span>
+                    <span className="text-xs text-[#878787]">{list.length} iniciativa{list.length === 1 ? "" : "s"}</span>
                   </div>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <div className="divide-y divide-[#F3F4F6] border-t border-[#F3F4F6]">
+                  <div className="divide-y divide-[#F0F0F0] border-t border-[#F0F0F0]">
                     {list.map((r) => {
                       const lastCk = lastCheckinByInit[r.id];
                       const kr = r.key_result_id ? krCodeById[r.key_result_id] : null;
                       const hist = checkinsByInit[r.id] ?? [];
                       const trend = computeTrend(hist);
                       const tMeta = TREND_META[trend];
+                      const showTrend = trend === "improving" || trend === "declining";
                       return (
                         <Link key={r.id} to={`/initiatives/${r.id}`} className="flex items-center gap-3 px-5 py-4 hover:bg-[#F8F9FB] transition-colors">
-                          <div className="metric text-[12px] text-[#9EA7B3] w-8 shrink-0">#{r.number}</div>
+                          <div className="font-mono text-xs text-[#9EA7B3] w-8 shrink-0">#{r.number}</div>
                           <div className="min-w-0 flex-1">
-                            <div className="text-[14px] font-medium text-[#0C2340] truncate">{r.title}</div>
-                            <div className="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-[#878787]">
-                              {r.owner && <span>{r.owner}</span>}
-                              {kr && <span className="metric text-[#0C2340] font-semibold">{kr}</span>}
-                              <span className={cn(lastCk ? "text-[#878787]" : "text-[#C0392B] font-medium")}>
-                                {lastCk ? `Último check-in: ${formatDate(lastCk)} (${daysBetween(lastCk)}d)` : "Sem check-ins"}
+                            <div className="text-sm font-medium text-[#0C2340] truncate">{r.title}</div>
+                            <div className="flex flex-wrap items-center gap-1.5 mt-1 text-xs text-[#878787]">
+                              {r.owner && <><span>{r.owner}</span><span>·</span></>}
+                              {kr && <><span className="text-[#0C2340] font-medium">{kr}</span><span>·</span></>}
+                              <span className={cn(!lastCk && "text-[#C0392B]")}>
+                                {lastCk ? `Último: ${formatDate(lastCk)} (${daysBetween(lastCk)}d)` : "Sem check-ins"}
                               </span>
+                              {showTrend && (
+                                <>
+                                  <span>·</span>
+                                  <span className={tMeta.color}>{tMeta.icon} {tMeta.label}</span>
+                                </>
+                              )}
                             </div>
-                            {r.impediment && <div className="text-[12px] text-[#C0392B]/80 mt-1">{r.impediment}</div>}
+                            {r.impediment && <div className="text-xs text-[#C0392B]/80 mt-1">{r.impediment}</div>}
                           </div>
-                          <div className="hidden md:flex flex-col items-end gap-1 shrink-0">
-                            <StatusSparkline checkins={hist} currentStatus={r.status} width={120} height={20} />
-                            <span className={cn("text-[10px] font-medium metric", tMeta.color)}>
-                              {tMeta.icon} {tMeta.label}
-                            </span>
+                          <div className="hidden md:block shrink-0">
+                            <StatusSparkline checkins={hist} currentStatus={r.status} width={100} height={18} />
                           </div>
                           <StatusBadge status={r.status} />
                         </Link>
