@@ -166,9 +166,6 @@ const Initiatives = () => {
             const list = groupedByCat[cat];
             if (!list.length) return null;
             const isOpen = openCats[cat] ?? true;
-            const statusCounts = (Object.keys(STATUS_META) as InitiativeStatus[]).map((s) => ({
-              s, n: list.filter((r) => r.status === s).length,
-            })).filter((x) => x.n > 0);
             return (
               <Collapsible
                 key={cat}
