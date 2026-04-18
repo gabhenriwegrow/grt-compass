@@ -227,15 +227,20 @@ const Chat = () => {
         });
         if (ckErr) throw ckErr;
 
-        const initPatch: Record<string, any> = { status: u.new_status };
-        if (u.impediment_update !== null && u.impediment_update !== undefined) {
-          initPatch.impediment = u.impediment_update;
-        } else if (u.new_status !== "bloqueado") {
-          // if not blocked anymore and no impediment provided, clear it
-          initPatch.impediment = null;
-        }
+        const impedimentValue =
+          u.impediment_update !== null && u.impediment_update !== undefined
+            ? u.impediment_update
+            : u.new_status !== "bloqueado"
+            ? null
+            : undefined;
 
-        const { error: upErr } = await supabase.from("initiatives").update(initPatch).eq("id", u.initiative_id);
+        const { error: upErr } = await supabase
+          .from("initiatives")
+          .update({
+            status: u.new_status,
+            ...(impedimentValue !== undefined ? { impediment: impedimentValue } : {}),
+          })
+          .eq("id", u.initiative_id);
         if (upErr) throw upErr;
 
         savedTitles.push(u.initiative_title);
