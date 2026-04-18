@@ -177,6 +177,33 @@ export type Database = {
           },
         ]
       }
+      monthly_mrr: {
+        Row: {
+          created_at: string
+          id: string
+          month: number
+          realized_value: number
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          month: number
+          realized_value?: number
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          month?: number
+          realized_value?: number
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
       objectives: {
         Row: {
           confidence: number
