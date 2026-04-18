@@ -2,18 +2,18 @@ export type InitiativeStatus = "concluido" | "em_andamento" | "bloqueado" | "nao
 export type Health = "on_track" | "at_risk" | "off_track" | "achieved";
 
 export const STATUS_META: Record<InitiativeStatus, { label: string; emoji: string; color: string; dot: string }> = {
-  concluido:     { label: "Concluído",    emoji: "🟢", color: "text-success",     dot: "bg-success" },
-  em_andamento:  { label: "Em andamento", emoji: "🔵", color: "text-primary",     dot: "bg-primary" },
-  bloqueado:     { label: "Bloqueado",    emoji: "🔴", color: "text-destructive", dot: "bg-destructive" },
-  nao_iniciado:  { label: "Não iniciado", emoji: "⚪", color: "text-muted-foreground", dot: "bg-muted-foreground" },
-  pausado:       { label: "Pausado",      emoji: "🟡", color: "text-warning",     dot: "bg-warning" },
+  concluido:     { label: "Concluído",    emoji: "🟢", color: "text-[#2D7D46]", dot: "bg-[#2D7D46]" },
+  em_andamento:  { label: "Em andamento", emoji: "🔵", color: "text-[#9B26B6]", dot: "bg-[#9B26B6]" },
+  bloqueado:     { label: "Bloqueado",    emoji: "🔴", color: "text-[#C0392B]", dot: "bg-[#C0392B]" },
+  nao_iniciado:  { label: "Não iniciado", emoji: "⚪", color: "text-[#878787]", dot: "bg-[#878787]" },
+  pausado:       { label: "Pausado",      emoji: "🟡", color: "text-[#B07D1A]", dot: "bg-[#B07D1A]" },
 };
 
 export const HEALTH_META: Record<Health, { label: string; emoji: string; color: string; bg: string }> = {
-  on_track:  { label: "On track",   emoji: "🟢", color: "text-success",     bg: "bg-success/10 border-success/30" },
-  at_risk:   { label: "Em risco",   emoji: "🟡", color: "text-warning",     bg: "bg-warning/10 border-warning/30" },
-  off_track: { label: "Off track",  emoji: "🔴", color: "text-destructive", bg: "bg-destructive/10 border-destructive/30" },
-  achieved:  { label: "Atingido",   emoji: "✅", color: "text-success",     bg: "bg-success/10 border-success/30" },
+  on_track:  { label: "On track",   emoji: "🟢", color: "text-[#2D7D46]", bg: "bg-[#2D7D46]/10 border-[#2D7D46]/30" },
+  at_risk:   { label: "Em risco",   emoji: "🟡", color: "text-[#B07D1A]", bg: "bg-[#B07D1A]/10 border-[#B07D1A]/30" },
+  off_track: { label: "Off track",  emoji: "🔴", color: "text-[#C0392B]", bg: "bg-[#C0392B]/10 border-[#C0392B]/30" },
+  achieved:  { label: "Atingido",   emoji: "✅", color: "text-[#2D7D46]", bg: "bg-[#2D7D46]/10 border-[#2D7D46]/30" },
 };
 
 export const CATEGORIES = [
@@ -157,10 +157,10 @@ export const computeTrend = (
 };
 
 export const TREND_META: Record<Trend, { label: string; icon: string; color: string }> = {
-  improving: { label: "Melhorando", icon: "↗", color: "text-success" },
-  stable:    { label: "Estável",    icon: "→", color: "text-muted-foreground" },
-  declining: { label: "Piorando",   icon: "↘", color: "text-destructive" },
-  new:       { label: "Novo",       icon: "•", color: "text-muted-foreground" },
+  improving: { label: "Melhorando", icon: "↗", color: "text-[#2D7D46]" },
+  stable:    { label: "Estável",    icon: "→", color: "text-[#878787]" },
+  declining: { label: "Piorando",   icon: "↘", color: "text-[#C0392B]" },
+  new:       { label: "Novo",       icon: "•", color: "text-[#878787]" },
 };
 
 // Parse number from BR string (R$ 1.260.000,00) or US string

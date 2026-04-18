@@ -57,7 +57,7 @@ export const GenerateReportButton = ({
       disabled={loading}
       variant={variant}
       size={size}
-      className={variant === "default" ? "bg-gradient-primary" : undefined}
+      className={variant === "default" ? "bg-[#9B26B6] hover:bg-[#8A22A3] text-white" : undefined}
     >
       {loading ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1.5" />}
       {loading ? "Gerando…" : label}

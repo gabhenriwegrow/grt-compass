@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Target } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect } from "react";
 
@@ -46,21 +45,21 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center px-4 py-8 bg-[#F5F7FA]">
       <div className="w-full max-w-md space-y-6 animate-fade-in">
         <div className="text-center space-y-3">
-          <div className="inline-flex w-12 h-12 rounded-xl bg-gradient-primary items-center justify-center shadow-glow">
-            <Target className="w-6 h-6 text-primary-foreground" />
+          <div className="inline-flex w-12 h-12 rounded-xl bg-[#0C2340] border-2 border-[#9B26B6] items-center justify-center text-white font-bold text-lg">
+            b
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">GRT Command Center</h1>
-            <p className="text-sm text-muted-foreground mt-1">Bernhoeft · Gestão de OKRs comerciais</p>
+            <h1 className="text-2xl font-bold tracking-tight text-[#0C2340]">GRT Command Center</h1>
+            <p className="text-sm text-[#878787] mt-1">Bernhoeft · Gestão de Terceiros</p>
           </div>
         </div>
 
-        <Card className="surface-elevated p-6">
+        <Card className="bg-white border border-[#DADADA] shadow-card p-6">
           <Tabs defaultValue="signin">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsList className="grid w-full grid-cols-2 mb-6 bg-[#F0F2F5]">
               <TabsTrigger value="signin">Entrar</TabsTrigger>
               <TabsTrigger value="signup">Cadastrar</TabsTrigger>
             </TabsList>
@@ -75,7 +74,7 @@ const Auth = () => {
                   <Label htmlFor="password">Senha</Label>
                   <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
-                <Button type="submit" disabled={loading} className="w-full bg-gradient-primary">
+                <Button type="submit" disabled={loading} className="w-full bg-[#0C2340] hover:bg-[#1A3A5C] text-white">
                   {loading ? "Entrando…" : "Entrar"}
                 </Button>
               </form>
@@ -91,7 +90,7 @@ const Auth = () => {
                   <Label htmlFor="password2">Senha</Label>
                   <Input id="password2" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
-                <Button type="submit" disabled={loading} className="w-full bg-gradient-primary">
+                <Button type="submit" disabled={loading} className="w-full bg-[#0C2340] hover:bg-[#1A3A5C] text-white">
                   {loading ? "Criando…" : "Criar conta"}
                 </Button>
               </form>

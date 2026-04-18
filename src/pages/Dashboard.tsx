@@ -257,14 +257,14 @@ const Dashboard = () => {
                 <XAxis dataKey="mes" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} axisLine={{ stroke: "hsl(var(--border))" }} tickLine={false} />
                 <YAxis tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => `R$ ${(v / 1000).toLocaleString("pt-BR")}k`} />
                 <Tooltip
-                  contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
+                  contentStyle={{ background: "#fff", border: "1px solid #DADADA", borderRadius: 8, fontSize: 12 }}
                   formatter={(v: number) => formatBRL(v)}
-                  cursor={{ fill: "hsl(var(--accent) / 0.3)" }}
+                  cursor={{ fill: "rgba(155, 38, 182, 0.08)" }}
                 />
-                <ReferenceLine y={monthlyTarget} stroke="hsl(var(--muted-foreground))" strokeDasharray="4 4" label={{ value: "Meta", fill: "hsl(var(--muted-foreground))", fontSize: 10, position: "right" }} />
+                <ReferenceLine y={monthlyTarget} stroke="#878787" strokeDasharray="4 4" label={{ value: "Meta", fill: "#878787", fontSize: 10, position: "right" }} />
                 <Bar
                   dataKey="realized"
-                  fill="hsl(var(--primary))"
+                  fill="#0C2340"
                   radius={[6, 6, 0, 0]}
                   onClick={(_, idx) => {
                     const m = monthlyMrr.find((x) => x.month === idx + 1);
